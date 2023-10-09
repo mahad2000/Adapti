@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "12955437094",
+    "project_id": "adapti-3d8a3",
+    "storage_bucket": "adapti-3d8a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12955437094:android:9199c71bcad4deb7dfbee7",
+        "android_client_info": {
+          "package_name": "com.group6.adapti"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvgGj5bhIAzAgLeZY2XELjYrQe1dBbjAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
