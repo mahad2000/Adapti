@@ -1,17 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary Brand Color -->
-        <item name="colorPrimary">@color/adapti_blue</item>
-        <item name="colorPrimaryVariant">@color/adapti_blue</item>
-        <item name="colorOnPrimary">@color/white</item>
-
-        <!-- Primary Brand Color -->
-        <item name="colorSecondary">@color/adapti_light_blue</item>
-        <item name="colorSecondaryVariant">@color/adapti_light_blue</item>
-        <item name="colorOnSecondary">@color/black</item>
-
+    <style name="Base.Theme.Adapti_Project" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+    <style name="Theme.Adapti_Project" parent="Base.Theme.Adapti_Project" />
 </resources>
