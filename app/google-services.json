@@ -1,21 +1,22 @@
 {
   "project_info": {
-    "project_number": "12955437094",
-    "project_id": "adapti-3d8a3",
-    "storage_bucket": "adapti-3d8a3.appspot.com"
+    "project_number": "730041114988",
+    "firebase_url": "https://adapti-22c80-default-rtdb.firebaseio.com",
+    "project_id": "adapti-22c80",
+    "storage_bucket": "adapti-22c80.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:12955437094:android:9199c71bcad4deb7dfbee7",
+        "mobilesdk_app_id": "1:730041114988:android:4ff1eda5ef6f2cd1381349",
         "android_client_info": {
-          "package_name": "com.group6.adapti"
+          "package_name": "com.cosc4319.adapti_project"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCvgGj5bhIAzAgLeZY2XELjYrQe1dBbjAo"
+          "current_key": "AIzaSyByPFiAnEEmK6JC0wLydln5wbj5TIvNtis"
         }
       ],
       "services": {
