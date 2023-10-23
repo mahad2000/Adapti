@@ -1,4 +1,4 @@
-package com.group6.adapti;
+package com.cosc4319.adapti_project;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.group6.adapti", appContext.getPackageName());
+        assertEquals("com.cosc4319.adapti_project", appContext.getPackageName());
     }
 }
