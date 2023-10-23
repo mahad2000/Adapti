@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Adapti_Project"
+rootProject.name = "Adapti_v2"
 include(":app")
  

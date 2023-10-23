@@ -1,4 +1,4 @@
-package com.group6.adapti;
+package com.cosc4319.adapti_project;
 
 import org.junit.Test;
 
