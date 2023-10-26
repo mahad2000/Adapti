@@ -9,39 +9,57 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Objects;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.AuthResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText loginUsername, loginPassword;
+    EditText loginEmail, loginPassword;
     Button loginButton;
     TextView signupRedirectText;
+    private FirebaseAuth mAuth; // Firebase Authentication instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        loginUsername = findViewById(R.id.login_username);
+        loginEmail = findViewById(R.id.login_email);
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
+        mAuth = FirebaseAuth.getInstance(); // Initialize Firebase Authentication
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!validateUsername() | !validatePassword()) {
+                String email = loginEmail.getText().toString();
+                String password = loginPassword.getText().toString();
 
+                if (!validateEmail() | !validatePassword()) {
+                    // Handle validation errors
                 } else {
-                    checkUser();
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user != null) {
+                                    // Login successful, direct to the main activity
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                // Login failed
+                                Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -53,21 +71,20 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
-    public Boolean validateUsername() {
-        String val = loginUsername.getText().toString();
+    public Boolean validateEmail() {
+        String val = loginEmail.getText().toString();
         if (val.isEmpty()) {
-            loginUsername.setError("Username cannot be empty");
+            loginEmail.setError("Email cannot be empty");
             return false;
         } else {
-            loginUsername.setError(null);
+            loginEmail.setError(null);
             return true;
         }
     }
 
-    public Boolean validatePassword(){
+    public Boolean validatePassword() {
         String val = loginPassword.getText().toString();
         if (val.isEmpty()) {
             loginPassword.setError("Password cannot be empty");
@@ -76,54 +93,5 @@ public class LoginActivity extends AppCompatActivity {
             loginPassword.setError(null);
             return true;
         }
-    }
-
-
-    public void checkUser(){
-        String userUsername = loginUsername.getText().toString().trim();
-        String userPassword = loginPassword.getText().toString().trim();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
-        Query checkUserDatabase = reference.orderByChild("username").equalTo(userUsername);
-
-        checkUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                if (snapshot.exists()){
-
-                    loginUsername.setError(null);
-                    String passwordFromDB = snapshot.child(userUsername).child("password").getValue(String.class);
-
-                    if (passwordFromDB.equals(userPassword)) {
-                        loginUsername.setError(null);
-
-                        String nameFromDB = snapshot.child(userUsername).child("name").getValue(String.class);
-                        String emailFromDB = snapshot.child(userUsername).child("email").getValue(String.class);
-                        String usernameFromDB = snapshot.child(userUsername).child("username").getValue(String.class);
-
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
-                        intent.putExtra("name", nameFromDB);
-                        intent.putExtra("email", emailFromDB);
-                        intent.putExtra("username", usernameFromDB);
-                        intent.putExtra("password", passwordFromDB);
-
-                        startActivity(intent);
-                    } else {
-                        loginPassword.setError("Invalid Credentials");
-                        loginPassword.requestFocus();
-                    }
-                } else {
-                    loginUsername.setError("User does not exist");
-                    loginUsername.requestFocus();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 }
