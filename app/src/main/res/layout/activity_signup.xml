@@ -58,11 +58,6 @@
                 android:drawableLeft="@drawable/email_icon"
                 android:drawablePadding="8dp"
                 android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/emailCriteria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red" />
 
 
             <EditText
@@ -70,13 +65,12 @@
                 android:layout_height="50dp"
                 android:id="@+id/signup_username"
                 android:background="@drawable/blue_border"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:padding="8dp"
                 android:hint="Username"
                 android:drawableLeft="@drawable/account_icon"
                 android:drawablePadding="8dp"
                 android:textColor="@color/black"/>
-
 
             <EditText
                 android:layout_width="match_parent"
@@ -90,14 +84,6 @@
                 android:drawableLeft="@drawable/password_lock_icon"
                 android:drawablePadding="8dp"
                 android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/passwordCriteria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/red" />
-
 
             <Button
                 android:layout_width="match_parent"
