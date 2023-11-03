@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -56,10 +57,13 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             } else {
                                 // Login failed
-                                Toast.makeText(LoginActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                String errorMessage = task.getException().getMessage();
+                                Log.e("LoginActivity", "Authentication error: " + errorMessage);
+                                Toast.makeText(LoginActivity.this, "Authentication error: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+
                 }
             }
         });
