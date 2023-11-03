@@ -13,7 +13,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="242dp"
-        app:srcCompat="@drawable/adapti_logo1" />
+        app:srcCompat="@drawable/adapti_logo" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
