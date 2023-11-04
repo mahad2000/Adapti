@@ -1,74 +1,115 @@
 package com.cosc4319.adapti_project.ui.add_event;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.cosc4319.adapti_project.DatePickerFragment;
-import com.cosc4319.adapti_project.LoginActivity;
 import com.cosc4319.adapti_project.R;
-import com.cosc4319.adapti_project.SignupActivity;
 import com.cosc4319.adapti_project.databinding.FragmentAddEventBinding;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
 
     private FragmentAddEventBinding binding;
-    private Switch allDaySwitch; // Add a member variable for the switch
+    private TextView newEventDate;
+    private Switch allDaySwitch;
+    private String currentDateString;
+    private Button saveEventButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        AddEventViewModel addEventViewModel = new ViewModelProvider(this).get(AddEventViewModel.class);
-        binding = FragmentAddEventBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        allDaySwitch = root.findViewById(R.id.all_day_switch); // Initialize the switch
+        View root = inflater.inflate(R.layout.fragment_add_event, container, false);
+        binding = FragmentAddEventBinding.bind(root);
+        saveEventButton = root.findViewById(R.id.save_event_button);
+        initializeUIElements();
+        setupEventListeners();
 
-        final TextView textView = binding.newEventName;
-        addEventViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
-        TextView newEventDate = root.findViewById(R.id.new_event_date);
-        newEventDate.setOnClickListener(new View.OnClickListener() {
+        saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment datePicker = new DatePickerFragment();
-                datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
-            }
-        });
-
-        allDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // Handle the switch state (isChecked) here
-                if (isChecked) {
-                    // The switch is checked, so it's an all-day event
-                    // You can set a boolean flag or update your data accordingly
-                    // For example, set an "isAllDay" variable to true
-                    boolean isAllDay = true;
-                } else {
-                    // The switch is unchecked, so it's not an all-day event
-                    // You can set the "isAllDay" variable to false
-                    boolean isAllDay = false;
-                }
+                saveEvent(); // Save the event information
             }
         });
 
         return root;
     }
+    private void saveEvent() {
+        // Get the event information from your UI elements
+        String eventTitle = binding.newEventName.getText().toString();
+        String eventDate = currentDateString;
+        boolean isAllDay = allDaySwitch.isChecked();
 
+        // Save the event to Firebase using the EventHelper
+        EventHelper eventHelper = new EventHelper();
+        eventHelper.addEvent(eventTitle, eventDate, isAllDay);
+
+        // Show a toast message indicating that the event is saved
+        Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
+
+        // Clear the UI elements or perform any other necessary actions to prepare for the next event
+        binding.newEventName.setText(""); // Clear the event name
+        allDaySwitch.setChecked(false); // Reset the all-day switch
+        currentDateString = null; // Clear the selected date
+
+        // Restart the fragment by replacing it with a new instance
+        AddEventFragment newFragment = new AddEventFragment();
+        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(this.getId(), newFragment);
+        fragmentTransaction.addToBackStack(null); // Optional: Add the transaction to the back stack
+        fragmentTransaction.commit();
+    }
+
+    private void initializeUIElements() {
+        newEventDate = binding.newEventDate;
+        allDaySwitch = binding.allDaySwitch;
+
+        // Initialize other UI elements if needed
+    }
+
+    private void setupEventListeners() {
+        AddEventViewModel addEventViewModel = new ViewModelProvider(this).get(AddEventViewModel.class);
+        final TextView newEventName = binding.newEventName;
+
+        addEventViewModel.getText().observe(getViewLifecycleOwner(), newEventName::setText);
+
+        newEventDate.setOnClickListener(view -> openDatePicker());
+
+        allDaySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> handleAllDaySwitch(isChecked));
+    }
+
+    private void openDatePicker() {
+        DialogFragment datePicker = new DatePickerFragment();
+        ((DatePickerFragment) datePicker).setDatePickerListener(this);
+        datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
+    }
+
+    private void handleAllDaySwitch(boolean isChecked) {
+        // Handle the switch state (isChecked) here
+        boolean isAllDay = isChecked;
+
+        // Additional logic can be added here if needed
+    }
 
     @Override
     public void onDestroyView() {
@@ -79,20 +120,17 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        String currentDateString = DateFormat.getDateInstance().format(calendar.getTime());
-
-        TextView newEventDate = getView().findViewById(R.id.new_event_date);
-        newEventDate.setText(currentDateString);
+        calendar.set(year, month, dayOfMonth);
+        currentDateString = DateFormat.getDateInstance().format(calendar.getTime());
+        updateDateInView(currentDateString);
     }
 
+    @Override
+    public void onDateSelected(String selectedDate) {
+        updateDateInView(selectedDate);
+    }
 
-    // Inside your activity or fragment
-
-
-
-
-
+    private void updateDateInView(String selectedDate) {
+        newEventDate.setText(selectedDate);
+    }
 }

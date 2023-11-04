@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Save Event"
-                android:id="@+id/signup_button"
+                android:id="@+id/save_event_button"
                 android:textSize="18sp"
                 android:layout_marginVertical="10dp"
                 android:backgroundTint="@color/adapti_blue"
