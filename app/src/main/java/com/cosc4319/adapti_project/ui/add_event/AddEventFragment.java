@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,13 +29,13 @@ import java.util.Calendar;
 public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     private FragmentAddEventBinding binding;
-
-
+    private Switch allDaySwitch; // Add a member variable for the switch
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         AddEventViewModel addEventViewModel = new ViewModelProvider(this).get(AddEventViewModel.class);
         binding = FragmentAddEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        allDaySwitch = root.findViewById(R.id.all_day_switch); // Initialize the switch
 
         final TextView textView = binding.newEventName;
         addEventViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
@@ -44,6 +46,23 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
             public void onClick(View view) {
                 DialogFragment datePicker = new DatePickerFragment();
                 datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
+            }
+        });
+
+        allDaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Handle the switch state (isChecked) here
+                if (isChecked) {
+                    // The switch is checked, so it's an all-day event
+                    // You can set a boolean flag or update your data accordingly
+                    // For example, set an "isAllDay" variable to true
+                    boolean isAllDay = true;
+                } else {
+                    // The switch is unchecked, so it's not an all-day event
+                    // You can set the "isAllDay" variable to false
+                    boolean isAllDay = false;
+                }
             }
         });
 
