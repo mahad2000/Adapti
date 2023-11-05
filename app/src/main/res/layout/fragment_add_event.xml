@@ -46,33 +46,43 @@
                 android:drawableLeft="@drawable/new_event_icon"
                 android:drawablePadding="8dp"
                 android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                android:id="@+id/new_event_date"
-                android:textSize="16sp"
-                android:gravity="center_vertical"
-                android:background="@drawable/blue_border"
-                android:layout_marginVertical="10dp"
-                android:padding="8dp"
-                android:drawableLeft="@drawable/calendar_icon_blue"
-                android:drawablePadding="8dp"
-                android:textColor="@color/adapti_blue"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/new_event_date"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/blue_border"
+                    android:layout_marginVertical="10dp"
+                    android:padding="8dp"
+                    android:drawableLeft="@drawable/calendar_icon_blue"
+                    android:drawablePadding="8dp"
+                    android:textColor="@color/adapti_blue"/>
 
+                <Switch
+                    android:id="@+id/all_day_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center"
+                    android:layout_gravity="end|center"
+                    android:text="All Day"
+                    android:padding="24dp"/>
 
-
+            </LinearLayout>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Save Event"
-                android:id="@+id/signup_button"
+                android:id="@+id/save_event_button"
                 android:textSize="18sp"
                 android:layout_marginVertical="10dp"
                 android:backgroundTint="@color/adapti_blue"
                 app:cornerRadius = "20dp"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

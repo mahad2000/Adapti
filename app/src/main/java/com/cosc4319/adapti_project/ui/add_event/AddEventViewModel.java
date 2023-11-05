@@ -10,10 +10,15 @@ public class AddEventViewModel extends ViewModel {
 
     public AddEventViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
     }
+
 
     public LiveData<String> getText() {
         return mText;
+    }
+
+    public void updateText(String newText) {
+        // Update the value of mText
+        mText.setValue(newText);
     }
 }
