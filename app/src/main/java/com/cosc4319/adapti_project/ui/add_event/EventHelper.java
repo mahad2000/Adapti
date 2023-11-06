@@ -6,36 +6,19 @@ import com.google.firebase.database.FirebaseDatabase;
 public class EventHelper {
     private DatabaseReference eventDatabase;
 
-    public EventHelper() {
-        // Initialize Firebase Database reference
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        eventDatabase = firebaseDatabase.getReference("events");
-    }
-
-    public void addEvent(String eventTitle, String eventDate, boolean isAllDay) {
-        // Generate a unique key for the event
-        String eventId = eventDatabase.push().getKey();
-
-        // Create an Event object to store the event data
-        Event event = new Event(eventTitle, eventDate, isAllDay);
-
-        // Save the event data to the Firebase database under the unique key
-        eventDatabase.child(eventId).setValue(event);
-    }
-
-    // Define a model class for the event
     public static class Event {
         private String eventTitle;
         private String eventDate;
         private boolean isAllDay;
-
+        private String eventTime;
         public Event() {
             // Default constructor required for Firebase
         }
 
-        public Event(String eventTitle, String eventDate, boolean isAllDay) {
+        public Event(String eventTitle, String eventDate, String eventTime, boolean isAllDay) {
             this.eventTitle = eventTitle;
             this.eventDate = eventDate;
+            this.eventTime = eventTime;
             this.isAllDay = isAllDay;
         }
 
@@ -50,5 +33,30 @@ public class EventHelper {
         public boolean isAllDay() {
             return isAllDay;
         }
+
+        public String getEventTime() {return eventTime; }
     }
+
+    public EventHelper() {
+        // Initialize Firebase Database reference
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        eventDatabase = firebaseDatabase.getReference("events");
+    }
+
+    public void addEvent(String eventTitle, String eventDate, String eventTime, boolean isAllDay) {
+        // Generate a unique key for the event
+        String eventId = eventDatabase.push().getKey();
+        if (isAllDay) {
+            eventTime = "";
+        }
+
+        // Create an Event object to store the event data
+        Event event = new Event(eventTitle, eventDate, eventTime, isAllDay);
+
+        // Save the event data to the Firebase database under the unique key
+        eventDatabase.child(eventId).setValue(event);
+    }
+
+    // Define a model class for the event
+
 }
