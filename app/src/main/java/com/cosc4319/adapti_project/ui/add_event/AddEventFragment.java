@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,17 +31,92 @@ import java.util.Calendar;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+// Add the imports for OnSuccessListener and OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnFailureListener;
+
+public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     private FragmentAddEventBinding binding;
     private TextView newEventDate;
     private Switch allDaySwitch;
     private String currentDateString;
     private Button saveEventButton;
+    private ImageView imageView;
+    private TextView textViewResult;
+    private Button buttonRecognize;
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_add_event, container, false);
-        binding = FragmentAddEventBinding.bind(root);
+        // Inflate the layout for this fragment
+        binding = FragmentAddEventBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        // Initialize UI elements
+        newEventDate = binding.newEventDate;
+        allDaySwitch = binding.allDaySwitch;
+        saveEventButton = binding.saveEventButton;
+        imageView = binding.imageView; // Make sure you have an ImageView with id 'image_view' in your layout
+        textViewResult = binding.textViewResult; // Make sure you have a TextView with id 'text_view_result' in your layout
+        buttonRecognize = binding.buttonTextRecognition; // Make sure you have a Button with id 'button_text_recognition' in your layout
+
+        initializeUIElements();
+        setupEventListeners();
+
+        buttonRecognize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recognizeText();
+            }
+        });
+
+        return root;
+    }
+    private void recognizeText() {
+        // Use BitmapFactory to get the Bitmap from the drawable resource
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.your_sample_image);
+        imageView.setImageBitmap(bitmap);
+
+        // Create an InputImage object from the Bitmap
+        InputImage image = InputImage.fromBitmap(bitmap, 0);
+
+        // Get an instance of TextRecognizer
+        TextRecognizer recognizer = TextRecognition.getClient();
+
+        // Process the image
+        recognizer.process(image)
+                .addOnSuccessListener(new OnSuccessListener<Text>() {
+                    @Override
+                    public void onSuccess(Text texts) {
+                        // Task completed successfully
+                        for (Text.TextBlock block : texts.getTextBlocks()) {
+                            String blockText = block.getText();
+                            textViewResult.append(blockText + "\n");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Task failed with an exception
+                        textViewResult.setText("Recognition failed: " + e.getMessage());
+                    }
+                });
+    }
+}
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentAddEventBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
@@ -83,8 +159,21 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     private void initializeUIElements() {
         newEventDate = binding.newEventDate;
         allDaySwitch = binding.allDaySwitch;
+        Button captureImageButton = binding.captureImageButton;
 
-        // Initialize other UI elements if needed
+        captureImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Here you would start an activity to capture an image or pick from gallery
+                // This could be done using an Intent to open the camera or gallery
+                // Once the image is captured or selected, process it with OCR
+                startImageCapture();
+            }
+        });
+    }
+    private void startImageCapture() {
+        // Intent to capture an image or open gallery
+        // Handle the result in onActivityResult
     }
 
     private void setupEventListeners() {
@@ -133,4 +222,5 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     private void updateDateInView(String selectedDate) {
         newEventDate.setText(selectedDate);
     }
+
 }
