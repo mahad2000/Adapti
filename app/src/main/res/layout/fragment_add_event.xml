@@ -10,11 +10,6 @@
     android:background="@drawable/adapti_background"
     tools:context=".SignupActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="242dp"
-        app:srcCompat="@drawable/adapti_logo" />
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,60 +29,87 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Welcome Back"
+                android:text="Add Event"
                 android:textSize="36sp"
+                android:layout_marginVertical="10dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textColor="@color/adapti_light_blue"/>
-
-
-
-
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/login_email"
+                android:id="@+id/new_event_name"
                 android:background="@drawable/blue_border"
-                android:layout_marginTop="20dp"
+                android:layout_marginVertical="10dp"
                 android:padding="8dp"
-                android:hint="Email"
-                android:drawableLeft="@drawable/account_icon"
+                android:hint="Event Title"
+                android:drawableLeft="@drawable/new_event_icon"
                 android:drawablePadding="8dp"
                 android:textColor="@color/black"/>
-
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/new_event_date"
+                    android:hint="Event Date"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/blue_border"
+                    android:layout_marginVertical="10dp"
+                    android:padding="8dp"
+                    android:drawableLeft="@drawable/calendar_icon_blue"
+                    android:drawablePadding="8dp"
+                    android:textColor="@color/adapti_blue"/>
+
+                <Switch
+                    android:id="@+id/all_day_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center"
+                    android:layout_gravity="end|center"
+                    android:text="All Day"
+                    android:padding="24dp"/>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:id="@+id/login_password"
+                android:id="@+id/new_event_time"
+                android:hint="Event Time"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
                 android:background="@drawable/blue_border"
-                android:layout_marginTop="20dp"
+                android:layout_marginVertical="10dp"
                 android:padding="8dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:drawableLeft="@drawable/password_lock_icon"
+                android:drawableLeft="@drawable/event_time_icon"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/adapti_blue"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Login"
-                android:id="@+id/login_button"
+                android:text="Save Event"
+                android:id="@+id/save_event_button"
                 android:textSize="18sp"
-                android:layout_marginTop="30dp"
+                android:layout_marginVertical="10dp"
                 android:backgroundTint="@color/adapti_blue"
                 app:cornerRadius = "20dp"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/signupRedirectText"
-                android:text="Don't Have an Account? Sign Up!"
+                android:id="@+id/discardEventText"
+                android:text="Discard Event"
                 android:layout_gravity="center"
                 android:padding="8dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginVertical="10dp"
                 android:textColor="@color/adapti_blue"
                 android:textSize="18sp"/>
+
 
         </LinearLayout>
 

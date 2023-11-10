@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.cosc4319.adapti_project.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_add"
+        android:name="com.cosc4319.adapti_project.ui.add_event.AddEventFragment"
+        android:label="@string/title_add"
+        tools:layout="@layout/fragment_add_event" />
 
     <fragment
         android:id="@+id/navigation_notifications"
