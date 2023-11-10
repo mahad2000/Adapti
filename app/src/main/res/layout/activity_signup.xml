@@ -40,7 +40,7 @@
                 android:layout_height="50dp"
                 android:id="@+id/signup_name"
                 android:background="@drawable/blue_border"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:padding="8dp"
                 android:hint="Name"
                 android:drawableLeft="@drawable/signup_person_icon"
@@ -62,7 +62,8 @@
                 android:id="@+id/emailCriteria"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/red" />
+                android:textColor="@color/red"
+                />
 
 
             <EditText
@@ -95,8 +96,8 @@
                 android:id="@+id/passwordCriteria"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/red" />
+                android:textColor="@color/red"
+                android:layout_marginHorizontal="10dp"/>
 
 
             <Button
@@ -105,7 +106,6 @@
                 android:text="Sign Up"
                 android:id="@+id/signup_button"
                 android:textSize="18sp"
-                android:layout_marginTop="30dp"
                 android:backgroundTint="@color/adapti_blue"
                 app:cornerRadius = "20dp"/>
 
