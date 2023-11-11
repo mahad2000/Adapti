@@ -54,6 +54,7 @@
                     android:layout_width="150dp"
                     android:layout_height="50dp"
                     android:id="@+id/new_event_date"
+                    android:hint="Event Date"
                     android:textSize="16sp"
                     android:gravity="center_vertical"
                     android:background="@drawable/blue_border"
@@ -72,7 +73,22 @@
                     android:text="All Day"
                     android:padding="24dp"/>
 
+
             </LinearLayout>
+
+            <TextView
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:id="@+id/new_event_time"
+                android:hint="Event Time"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:background="@drawable/blue_border"
+                android:layout_marginVertical="10dp"
+                android:padding="8dp"
+                android:drawableLeft="@drawable/event_time_icon"
+                android:drawablePadding="8dp"
+                android:textColor="@color/adapti_blue"/>
 
             <Button
                 android:layout_width="match_parent"
@@ -100,6 +116,7 @@
                 android:text="Discard Event"
                 android:textColor="@color/adapti_blue"
                 android:textSize="18sp" />
+
 
         </LinearLayout>
 

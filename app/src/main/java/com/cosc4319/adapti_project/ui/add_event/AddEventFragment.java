@@ -1,15 +1,13 @@
 package com.cosc4319.adapti_project.ui.add_event;
 
 import android.app.DatePickerDialog;
-import android.os.Build;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,95 +25,21 @@ import com.cosc4319.adapti_project.databinding.FragmentAddEventBinding;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-// Add the imports for OnSuccessListener and OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.OnFailureListener;
-
-public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
 
     private FragmentAddEventBinding binding;
     private TextView newEventDate;
     private Switch allDaySwitch;
     private String currentDateString;
     private Button saveEventButton;
-    private ImageView imageView;
-    private TextView textViewResult;
-    private Button buttonRecognize;
+    private TextView newEventTime;
+    private Calendar selectedTime = Calendar.getInstance();
 
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentAddEventBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        // Initialize UI elements
-        newEventDate = binding.newEventDate;
-        allDaySwitch = binding.allDaySwitch;
-        saveEventButton = binding.saveEventButton;
-        imageView = binding.imageView; // Make sure you have an ImageView with id 'image_view' in your layout
-        textViewResult = binding.textViewResult; // Make sure you have a TextView with id 'text_view_result' in your layout
-        buttonRecognize = binding.buttonTextRecognition; // Make sure you have a Button with id 'button_text_recognition' in your layout
-
-        initializeUIElements();
-        setupEventListeners();
-
-        buttonRecognize.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                recognizeText();
-            }
-        });
-
-        return root;
-    }
-    private void recognizeText() {
-        // Use BitmapFactory to get the Bitmap from the drawable resource
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.your_sample_image);
-        imageView.setImageBitmap(bitmap);
-
-        // Create an InputImage object from the Bitmap
-        InputImage image = InputImage.fromBitmap(bitmap, 0);
-
-        // Get an instance of TextRecognizer
-        TextRecognizer recognizer = TextRecognition.getClient();
-
-        // Process the image
-        recognizer.process(image)
-                .addOnSuccessListener(new OnSuccessListener<Text>() {
-                    @Override
-                    public void onSuccess(Text texts) {
-                        // Task completed successfully
-                        for (Text.TextBlock block : texts.getTextBlocks()) {
-                            String blockText = block.getText();
-                            textViewResult.append(blockText + "\n");
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Task failed with an exception
-                        textViewResult.setText("Recognition failed: " + e.getMessage());
-                    }
-                });
-    }
-}
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentAddEventBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View root = inflater.inflate(R.layout.fragment_add_event, container, false);
+        binding = FragmentAddEventBinding.bind(root);
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
@@ -134,11 +57,13 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         // Get the event information from your UI elements
         String eventTitle = binding.newEventName.getText().toString();
         String eventDate = currentDateString;
+        String eventTime = newEventTime.getText().toString();
         boolean isAllDay = allDaySwitch.isChecked();
+
 
         // Save the event to Firebase using the EventHelper
         EventHelper eventHelper = new EventHelper();
-        eventHelper.addEvent(eventTitle, eventDate, isAllDay);
+        eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
 
         // Show a toast message indicating that the event is saved
         Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
@@ -147,6 +72,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         binding.newEventName.setText(""); // Clear the event name
         allDaySwitch.setChecked(false); // Reset the all-day switch
         currentDateString = null; // Clear the selected date
+        newEventTime.setText("");
 
         // Restart the fragment by replacing it with a new instance
         AddEventFragment newFragment = new AddEventFragment();
@@ -158,22 +84,10 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
 
     private void initializeUIElements() {
         newEventDate = binding.newEventDate;
+        newEventTime = binding.newEventTime;
         allDaySwitch = binding.allDaySwitch;
-        Button captureImageButton = binding.captureImageButton;
 
-        captureImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Here you would start an activity to capture an image or pick from gallery
-                // This could be done using an Intent to open the camera or gallery
-                // Once the image is captured or selected, process it with OCR
-                startImageCapture();
-            }
-        });
-    }
-    private void startImageCapture() {
-        // Intent to capture an image or open gallery
-        // Handle the result in onActivityResult
+        // Initialize other UI elements if needed
     }
 
     private void setupEventListeners() {
@@ -183,8 +97,15 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         addEventViewModel.getText().observe(getViewLifecycleOwner(), newEventName::setText);
 
         newEventDate.setOnClickListener(view -> openDatePicker());
-
-        allDaySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> handleAllDaySwitch(isChecked));
+        newEventTime.setOnClickListener(view -> openTimePicker());
+        allDaySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            handleAllDaySwitch(isChecked);
+            if (isChecked) {
+                newEventTime.setVisibility(View.GONE); // Hide the time picker
+            } else {
+                newEventTime.setVisibility(View.VISIBLE); // Show the time picker
+            }
+        });
     }
 
     private void openDatePicker() {
@@ -192,7 +113,30 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         ((DatePickerFragment) datePicker).setDatePickerListener(this);
         datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
     }
+    private void openTimePicker() {
+        if (allDaySwitch.isChecked()) {
+            // If it is checked, do not open the time picker
+            return;
+        }
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                requireContext(),
+            (view, hourOfDay, minute) -> {
+                // Handle the selected time
+                selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedTime.set(Calendar.MINUTE, minute);
 
+                // Format and display the selected time
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                String formattedTime = timeFormat.format(selectedTime.getTime());
+                newEventTime.setText(formattedTime);
+            },
+            selectedTime.get(Calendar.HOUR_OF_DAY),
+            selectedTime.get(Calendar.MINUTE),
+            false // set true if you want 24-hour format
+        );
+
+        timePickerDialog.show();
+    }
     private void handleAllDaySwitch(boolean isChecked) {
         // Handle the switch state (isChecked) here
         boolean isAllDay = isChecked;
@@ -216,11 +160,11 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
 
     @Override
     public void onDateSelected(String selectedDate) {
+        currentDateString = selectedDate;
         updateDateInView(selectedDate);
     }
 
     private void updateDateInView(String selectedDate) {
         newEventDate.setText(selectedDate);
     }
-
 }
