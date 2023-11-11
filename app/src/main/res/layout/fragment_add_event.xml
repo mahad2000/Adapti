@@ -100,12 +100,6 @@
                 android:backgroundTint="@color/adapti_blue"
                 app:cornerRadius = "20dp"/>
 
-            <Button
-                android:id="@+id/button_text_recognition"
-                android:layout_width="298dp"
-                android:layout_height="wrap_content"
-                android:text="Recognize Text" />
-
             <TextView
                 android:id="@+id/discardEventText"
                 android:layout_width="wrap_content"
@@ -119,29 +113,6 @@
 
 
         </LinearLayout>
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity">
-
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/your_sample_image" />
-
-            <TextView
-                android:id="@+id/text_view_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/button_text_recognition"
-                android:padding="16dp"
-                android:textSize="16sp" />
-
-        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
