@@ -1,5 +1,6 @@
 package com.cosc4319.adapti_project;
 import android.os.Bundle;
+import android.app.Dialog;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView dialogText;
     public static final Integer RecordAudioRequestCode = 1;
     private SpeechRecognizer speechRecognizer;
     private EditText editText;
@@ -92,9 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResults(Bundle bundle) {
-                micButton.setImageResource(R.drawable.ic_microphone);
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                editText.setText(data.get(0));
+                if (data != null && !data.isEmpty()) {
+                    String spokenText = data.get(0);
+                    if (dialogText != null) {
+                        dialogText.setText(spokenText);  // Update the TextView in the popup
+                    }
+                }
             }
 
             @Override
@@ -111,17 +117,17 @@ public class MainActivity extends AppCompatActivity {
         micButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                    micButton.setImageResource(R.drawable.ic_microphone); // Change icon as needed
+                    showMicrophonePopup(); // Show the popup dialog
+                    speechRecognizer.startListening(speechRecognizerIntent); // Start listening
+                }
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP){
                     speechRecognizer.stopListening();
-                }
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                    micButton.setImageResource(R.drawable.ic_microphone);
-                    speechRecognizer.startListening(speechRecognizerIntent);
                 }
                 return false;
             }
         });
-
 
 
 
@@ -148,6 +154,24 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
     }
+    private void showMicrophonePopup() {
+        final Dialog popupDialog = new Dialog(this);
+        popupDialog.setContentView(R.layout.dialog_microphone);
+
+        // Initialize dialog components
+        dialogText = popupDialog.findViewById(R.id.dialog_text);  // Assign the popup's TextView
+
+        Button closeButton = popupDialog.findViewById(R.id.close_button);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupDialog.dismiss();
+            }
+        });
+
+        popupDialog.show();
+    }
+
 
     @Override
     protected void onDestroy() {
