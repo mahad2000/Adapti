@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.home;
+package com.cosc4319.adapti_project.fragments.home;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

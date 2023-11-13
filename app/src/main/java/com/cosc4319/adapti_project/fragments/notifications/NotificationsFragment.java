@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.notifications;
+package com.cosc4319.adapti_project.fragments.notifications;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.add_event;
+package com.cosc4319.adapti_project.utililities;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -9,36 +9,6 @@ public class EventHelper {
     private DatabaseReference eventDatabase;
     private FirebaseAuth firebaseAuth;
 
-    public static class Event {
-        private String eventTitle;
-        private String eventDate;
-        private boolean isAllDay;
-        private String eventTime;
-        public Event() {
-            // Default constructor required for Firebase
-        }
-
-        public Event(String eventTitle, String eventDate, String eventTime, boolean isAllDay) {
-            this.eventTitle = eventTitle;
-            this.eventDate = eventDate;
-            this.eventTime = eventTime;
-            this.isAllDay = isAllDay;
-        }
-
-        public String getEventTitle() {
-            return eventTitle;
-        }
-
-        public String getEventDate() {
-            return eventDate;
-        }
-
-        public boolean isAllDay() {
-            return isAllDay;
-        }
-
-        public String getEventTime() {return eventTime; }
-    }
 
     public EventHelper() {
         // Initialize Firebase Database reference

@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project;
+package com.cosc4319.adapti_project.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.add_event;
+package com.cosc4319.adapti_project.fragments.add_event;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

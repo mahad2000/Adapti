@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.notifications;
+package com.cosc4319.adapti_project.fragments.notifications;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

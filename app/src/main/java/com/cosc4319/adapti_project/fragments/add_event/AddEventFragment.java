@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.add_event;
+package com.cosc4319.adapti_project.fragments.add_event;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -18,9 +18,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.cosc4319.adapti_project.DatePickerFragment;
+import com.cosc4319.adapti_project.fragments.DatePickerFragment;
 import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.FragmentAddEventBinding;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

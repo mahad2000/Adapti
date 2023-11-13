@@ -1,39 +1,39 @@
-package com.cosc4319.adapti_project;
+package com.cosc4319.adapti_project.activities;
+
+import static com.cosc4319.adapti_project.utililities.ValidationUtils.isEmailValid;
+import static com.cosc4319.adapti_project.utililities.ValidationUtils.isPasswordValid;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.cosc4319.adapti_project.R;
+import com.cosc4319.adapti_project.utililities.FirebaseAuthenticationHelper;
+import com.cosc4319.adapti_project.utililities.ValidationUtils;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.regex.Pattern;
-
-public class SignupActivity extends AppCompatActivity {
+public class SignupActivity extends BaseActivity {
+    private EditText signupName, signupUsername, signupEmail, signupPassword;
+    private TextView loginRedirectText, passwordCriteriaText, emailCriteriaText;
+    private Button signupButton;
     private FirebaseAuth firebaseAuth;
-    EditText signupName, signupUsername, signupEmail, signupPassword;
-    TextView loginRedirectText, passwordCriteriaText, emailCriteriaText;
-    Button signupButton;
-    FirebaseDatabase database;
-    DatabaseReference reference;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
+        // Initialize Firebase Authentication
         firebaseAuth = FirebaseAuth.getInstance();
+
+        //find by IDs
         signupName = findViewById(R.id.signup_name);
         signupEmail = findViewById(R.id.signup_email);
         signupUsername = findViewById(R.id.signup_username);
@@ -46,37 +46,32 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                database = FirebaseDatabase.getInstance();
-                reference = database.getReference("users");
-
                 String name = signupName.getText().toString();
                 String email = signupEmail.getText().toString();
-                String username = signupUsername.getText().toString();
                 String password = signupPassword.getText().toString();
 
-                if (isPasswordValid(password) && isEmailValid(email)) {
-                    // Use Firebase Authentication to create a new user
-                    firebaseAuth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(SignupActivity.this, task -> {
-                                if (task.isSuccessful()) {
-                                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (ValidationUtils.isPasswordValid(password) && ValidationUtils.isEmailValid(email)) {
+                    // Use Firebase Authentication helper to create a new user
+                    FirebaseAuthenticationHelper firebaseAuthHelper = new FirebaseAuthenticationHelper();
+                    firebaseAuthHelper.signUpWithFirebase(email, password, task -> {
+                        handleFirebaseTaskResult(task, "You have signed up successfully!");
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                                    // Update user profile if needed
-                                    if (user != null) {
-                                        user.updateProfile(new UserProfileChangeRequest.Builder()
-                                                .setDisplayName(name)
-                                                .build());
-                                    }
-
-                                    Toast.makeText(SignupActivity.this, "You have signed up successfully!", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(SignupActivity.this, "Failed to create a user.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            if (user != null) {
+                                // Update user profile if needed
+                                user.updateProfile(new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name)
+                                        .build());
+                            }
+                            Intent intent = new Intent(SignupActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        } else {
+                            showShortToast("Failed to create a user.");
+                        }
+                    });
                 } else {
-                    Toast.makeText(SignupActivity.this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
+                    showShortToast("Invalid email or password.");
                 }
             }
         });
@@ -137,13 +132,5 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isPasswordValid(String password) {
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9!@#\\$%^&*]).{8,}$";
-        return Pattern.matches(passwordPattern, password);
-    }
 
-    private boolean isEmailValid(String email) {
-        String emailPattern = "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+)\\.(com|org|edu|net|gov|mil|co\\.uk|io|info|etc)$";
-        return Pattern.matches(emailPattern, email);
-    }
 }
