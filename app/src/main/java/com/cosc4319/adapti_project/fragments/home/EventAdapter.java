@@ -6,7 +6,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cosc4319.adapti_project.utililities.Event;
+
+import java.util.List;
+
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
+
+    private List<Event> eventList;
+
+    // Constructor accepting a list of events
+    public EventAdapter(List<Event> eventList) {
+        this.eventList = eventList;
+    }
+
     @NonNull
     @Override
     public EventAdapter.EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -30,6 +42,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             super(itemView);
         }
         // Hold views for an event item, e.g., TextViews for title, date, time, etc.
+    }
+
+    public void updateData(List<Event> updatedList) {
+        eventList.clear();
+        eventList.addAll(updatedList);
+        notifyDataSetChanged(); // Notifying the adapter of the changes
     }
 
 }

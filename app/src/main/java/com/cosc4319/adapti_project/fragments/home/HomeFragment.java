@@ -9,11 +9,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.FragmentHomeBinding;
 import com.cosc4319.adapti_project.utililities.Event;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
@@ -31,19 +42,38 @@ public class HomeFragment extends Fragment {
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        // Create an instance of the Event class and set the date
-        Event event = new Event("Meeting", "12/25/2023", "10:00 AM", true);
+        RecyclerView recyclerView = root.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext())); // Setting a LinearLayoutManager
 
-        // Get the day and month
-        String day = Objects.requireNonNull(event.getDay()); // Null check here
-        String month = Objects.requireNonNull(event.getMonth()); // Null check here
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        String userId = currentUser.getUid();
 
-        // Set the day and month to the appropriate TextView
-        TextView dayTextView = root.findViewById(R.id.eventDay);
-        TextView monthTextView = root.findViewById(R.id.eventMonth);
+        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(userId)
+                .child("events");
 
-        dayTextView.setText(day);
-        monthTextView.setText(month);
+        EventAdapter adapter = new EventAdapter(new ArrayList<>()); // Create the adapter
+        recyclerView.setAdapter(adapter); // Set the adapter initially
+
+        eventsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Event> eventList = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Event event = snapshot.getValue(Event.class);
+                    eventList.add(event);
+                }
+
+                // Update adapter data
+                adapter.updateData(eventList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
 
         return root;
     }
