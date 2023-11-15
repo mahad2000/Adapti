@@ -1,6 +1,7 @@
 package com.cosc4319.adapti_project;
 import android.os.Bundle;
 import android.app.Dialog;
+import com.cosc4319.adapti_project.ui.add_event.AddEventFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -97,11 +99,12 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (data != null && !data.isEmpty()) {
                     String spokenText = data.get(0);
-                    if (dialogText != null) {
-                        dialogText.setText(spokenText);  // Update the TextView in the popup
-                    }
+                    Log.d("VoiceCommand", "Recognized Text: " + spokenText);
+                    Toast.makeText(MainActivity.this, "Recognized: " + spokenText, Toast.LENGTH_LONG).show();
+                    interpretCommand(spokenText);  // Ensure this is being called
                 }
             }
+
 
             @Override
             public void onPartialResults(Bundle bundle) {
@@ -117,15 +120,13 @@ public class MainActivity extends AppCompatActivity {
         micButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                    micButton.setImageResource(R.drawable.ic_microphone); // Change icon as needed
-                    showMicrophonePopup(); // Show the popup dialog
-                    speechRecognizer.startListening(speechRecognizerIntent); // Start listening
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    speechRecognizer.startListening(speechRecognizerIntent);
                 }
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     speechRecognizer.stopListening();
                 }
-                return false;
+                return true;  // Change this to true
             }
         });
 
@@ -145,6 +146,56 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
         }
     }
+    private void interpretCommand(String command) {
+        if (command.toLowerCase().startsWith("create event")) {
+            createEvent(command);
+        }
+        // ... other commands
+    }
+    private void createEvent(String command) {
+        // Example command: "create event Doctor Appointment on April 5 at 10 AM"
+
+        // Split the command into parts
+        String[] parts = command.split(" ");
+
+        // Basic validation to check if the command has the minimum required parts
+        if (parts.length < 8) {
+            // Handle error - command format is not as expected
+            Log.e("VoiceCommand", "Command format not recognized");
+            return;
+        }
+
+        // Extract event name - this is a simplistic approach, consider refining it
+        // Assuming the event name is always one word for now
+        String eventName = parts[2];
+
+        // Extract date and time assuming they are always at fixed positions
+        // This should be improved for flexibility and error checking
+        String eventDate = parts[4] + " " + parts[5];
+        String eventTime = parts[7] + " " + parts[8];
+        boolean isAllDay = false; // Additional logic needed for determining this
+
+        // After parsing, pass the data to AddEventFragment
+        passDataToAddEventFragment(eventName, eventDate, eventTime, isAllDay);
+    }
+
+    private void passDataToAddEventFragment(String eventName, String eventDate, String eventTime, boolean isAllDay) {
+        AddEventFragment fragment = new AddEventFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("eventName", eventName);
+        bundle.putString("eventDate", eventDate);
+        bundle.putString("eventTime", eventTime);
+        bundle.putBoolean("isAllDay", isAllDay);
+
+        fragment.setArguments(bundle);
+
+        // Perform the fragment transaction to display AddEventFragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.nav_host_fragment_activity_main, fragment) // Replace 'fragment_container' with your container ID
+                .addToBackStack(null)
+                .commit();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -154,23 +205,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
     }
-    private void showMicrophonePopup() {
-        final Dialog popupDialog = new Dialog(this);
-        popupDialog.setContentView(R.layout.dialog_microphone);
 
-        // Initialize dialog components
-        dialogText = popupDialog.findViewById(R.id.dialog_text);  // Assign the popup's TextView
-
-        Button closeButton = popupDialog.findViewById(R.id.close_button);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupDialog.dismiss();
-            }
-        });
-
-        popupDialog.show();
-    }
 
 
     @Override

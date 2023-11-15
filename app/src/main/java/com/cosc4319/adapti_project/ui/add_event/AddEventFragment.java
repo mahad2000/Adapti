@@ -1,8 +1,10 @@
 package com.cosc4319.adapti_project.ui.add_event;
 
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +45,22 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
+        if (getArguments() != null) {
+            String eventName = getArguments().getString("eventName", "");
+            String eventDate = getArguments().getString("eventDate", "");
+            String eventTime = getArguments().getString("eventTime", "");
+            boolean isAllDay = getArguments().getBoolean("isAllDay", false);
+
+            Log.d("EventFragment", "Event Name: " + eventName);
+            Log.d("EventFragment", "Event Date: " + eventDate);
+            Log.d("EventFragment", "Event Time: " + eventTime);
+            Log.d("EventFragment", "Event is All Day: " + isAllDay);
+
+            setEventDataFromVoiceCommand(eventName, eventDate, eventTime, isAllDay);
+        }
 
         saveEventButton.setOnClickListener(new View.OnClickListener() {
+            //Log.d("EventFragment", "Saving event");
             @Override
             public void onClick(View view) {
                 saveEvent(); // Save the event information
@@ -52,6 +68,13 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         });
 
         return root;
+    }
+    public void setEventDataFromVoiceCommand(String eventName, String eventDate, String eventTime, boolean isAllDay) {
+        binding.newEventName.setText(eventName);
+        newEventDate.setText(eventDate);
+        newEventTime.setText(eventTime);
+        allDaySwitch.setChecked(isAllDay);
+        newEventTime.setVisibility(isAllDay ? View.GONE : View.VISIBLE);
     }
     private void saveEvent() {
         // Get the event information from your UI elements
