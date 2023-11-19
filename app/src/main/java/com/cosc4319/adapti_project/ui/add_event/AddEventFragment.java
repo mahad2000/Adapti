@@ -143,19 +143,19 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         }
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 requireContext(),
-            (view, hourOfDay, minute) -> {
-                // Handle the selected time
-                selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                selectedTime.set(Calendar.MINUTE, minute);
+                (view, hourOfDay, minute) -> {
+                    // Handle the selected time
+                    selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    selectedTime.set(Calendar.MINUTE, minute);
 
-                // Format and display the selected time
-                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-                String formattedTime = timeFormat.format(selectedTime.getTime());
-                newEventTime.setText(formattedTime);
-            },
-            selectedTime.get(Calendar.HOUR_OF_DAY),
-            selectedTime.get(Calendar.MINUTE),
-            false // set true if you want 24-hour format
+                    // Format and display the selected time
+                    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+                    String formattedTime = timeFormat.format(selectedTime.getTime());
+                    newEventTime.setText(formattedTime);
+                },
+                selectedTime.get(Calendar.HOUR_OF_DAY),
+                selectedTime.get(Calendar.MINUTE),
+                false // set true if you want 24-hour format
         );
 
         timePickerDialog.show();

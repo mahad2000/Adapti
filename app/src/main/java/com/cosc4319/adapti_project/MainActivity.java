@@ -2,7 +2,12 @@ package com.cosc4319.adapti_project;
 import android.os.Bundle;
 import android.app.Dialog;
 import com.cosc4319.adapti_project.ui.add_event.AddEventFragment;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Gravity;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -100,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null && !data.isEmpty()) {
                     String spokenText = data.get(0);
                     Log.d("VoiceCommand", "Recognized Text: " + spokenText);
-                    Toast.makeText(MainActivity.this, "Recognized: " + spokenText, Toast.LENGTH_LONG).show();
-                    interpretCommand(spokenText);  // Ensure this is being called
+                    showPopupWithText(spokenText); // Show the popup with the recognized text
                 }
             }
+
 
 
             @Override
@@ -152,6 +157,25 @@ public class MainActivity extends AppCompatActivity {
         }
         // ... other commands
     }
+    private void showPopupWithText(String text) {
+        // Inflate the popup layout
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_layout, null);
+
+        // Create a PopupWindow
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
+
+        // Set the text to the TextView
+        TextView textView = popupView.findViewById(R.id.popup_text_view);
+        textView.setText(text);
+
+        // Show the popup window
+        popupWindow.showAtLocation(binding.getRoot(), Gravity.CENTER, 0, 0);
+    }
+
     private void createEvent(String command) {
         // Example command: "create event Doctor Appointment on April 5 at 10 AM"
 
@@ -216,4 +240,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
