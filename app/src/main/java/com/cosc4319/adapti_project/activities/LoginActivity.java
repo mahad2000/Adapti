@@ -45,7 +45,7 @@ public class LoginActivity extends BaseActivity {
                     mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            handleFirebaseTaskResult(task, "Logged in successfully!");
+                            //handleFirebaseTaskResult(task, "Logged in successfully!");
                             if (task.isSuccessful()) {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
