@@ -47,7 +47,7 @@ public class NotificationsFragment extends Fragment {
                 @Override
                 public void onDataLoaded(List<Event> eventList) {
                     // Update the RecyclerView with the retrieved events
-                    eventAdapter = new EventAdapter(eventList);
+                    EventAdapter eventAdapter = new EventAdapter(eventList, getActivity());
                     recyclerView.setAdapter(eventAdapter);
                 }
             });

@@ -35,7 +35,7 @@ import java.util.Locale;
 public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
 
     private FragmentAddEventBinding binding;
-    private EditText newEventName;  // Updated variable name
+    private EditText newEventName;
     private TextView newEventDate;
     private Switch allDaySwitch;
     private Button saveEventButton;
@@ -56,7 +56,6 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
             setEventDataFromVoiceCommand(getArguments());
         }
 
-        // Check if there are arguments containing selectedDate
         if (getArguments() != null && getArguments().containsKey("selectedDate")) {
             handleSelectedDate(getArguments());
         }
@@ -69,7 +68,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     private void initializeUIElements() {
-        newEventName = binding.newEventName;  // Updated variable name
+        newEventName = binding.newEventName;
         newEventDate = binding.newEventDate;
         newEventTime = binding.newEventTime;
         allDaySwitch = binding.allDaySwitch;
@@ -81,12 +80,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         String eventTime = arguments.getString("eventTime", "");
         boolean isAllDay = arguments.getBoolean("isAllDay", false);
 
-        Log.d("EventFragment", "Event Name: " + eventName);
-        Log.d("EventFragment", "Event Date: " + eventDate);
-        Log.d("EventFragment", "Event Time: " + eventTime);
-        Log.d("EventFragment", "Event is All Day: " + isAllDay);
-
-        newEventName.setText(eventName);  // Updated variable name
+        newEventName.setText(eventName);
         currentDateString = eventDate;
 
         if (isAllDay) {
@@ -125,8 +119,6 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
 
         Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
     }
-
-
 
     private void setupEventListeners() {
         AddEventViewModel addEventViewModel = new ViewModelProvider(this).get(AddEventViewModel.class);
@@ -170,8 +162,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     private void handleAllDaySwitch(boolean isChecked) {
-        // Handle the switch state (isChecked) here
-        // Additional logic can be added here if needed
+        newEventTime.setText("All Day");
     }
 
     @Override

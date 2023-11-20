@@ -1,9 +1,14 @@
 package com.cosc4319.adapti_project.utililities;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,24 +20,30 @@ import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
     private List<Event> eventList;
+    private Context context;  // Add a reference to the context
 
-    public EventAdapter(List<Event> eventList) {
+    public EventAdapter(List<Event> eventList, Context context) {
         this.eventList = eventList;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Inflating the layout for each item in the RecyclerView
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_item, parent, false);
         return new EventViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
+        // Binding data to the ViewHolder
         Event event = eventList.get(position);
 
+        // Setting the event title
         holder.textEventTitle.setText(event.getEventTitle());
 
+        // Formatting and setting the event date and time
         String dateTimeText;
         if (event.getEventDate() != null) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -47,21 +58,62 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
 
         holder.textEventDateTime.setText(dateTimeText);
+
+        // Set click listeners for the images
+        holder.editImage.setOnClickListener(v -> {
+            // Handle click on edit image
+            Toast.makeText(context, "Edit clicked for event at position " + position, Toast.LENGTH_SHORT).show();
+            // Add code to navigate to edit page for the event
+        });
+
+        holder.deleteImage.setOnClickListener(v -> {
+            // Handle click on delete image
+            showDeleteConfirmationDialog(position);
+        });
     }
 
     @Override
     public int getItemCount() {
+        // Returning the total number of items in the data set
         return eventList.size();
     }
 
+    // ViewHolder class for holding references to the views in each item
     public static class EventViewHolder extends RecyclerView.ViewHolder {
         public TextView textEventTitle;
         public TextView textEventDateTime;
+        public ImageView editImage;
+        public ImageView deleteImage;
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
+            // Initializing TextViews and ImageViews from the layout
             textEventTitle = itemView.findViewById(R.id.textEventTitle);
             textEventDateTime = itemView.findViewById(R.id.textEventDateTime);
+            editImage = itemView.findViewById(R.id.editImage);
+            deleteImage = itemView.findViewById(R.id.deleteImage);
         }
+    }
+
+    private void showDeleteConfirmationDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Confirm Delete");
+        builder.setMessage("Are you sure you want to delete this event?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Handle delete confirmation
+                Toast.makeText(context, "Delete confirmed for event at position " + position, Toast.LENGTH_SHORT).show();
+                // Add code to delete the event
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Handle cancel
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 }
