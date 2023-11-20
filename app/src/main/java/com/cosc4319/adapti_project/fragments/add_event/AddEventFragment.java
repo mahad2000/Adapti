@@ -139,7 +139,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         eventHelper.addEvent(eventTitle, eventDate, eventTime, allDaySwitch.isChecked());
 
         // Show a toast message indicating that the event is saved
-        Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
 
         // Clear the UI elements or perform any other necessary actions to prepare for the next event
         binding.newEventName.setText(""); // Clear the event name
