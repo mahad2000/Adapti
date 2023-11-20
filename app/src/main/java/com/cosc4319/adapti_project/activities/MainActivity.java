@@ -1,7 +1,8 @@
 package com.cosc4319.adapti_project.activities;
 import android.os.Bundle;
 import android.app.Dialog;
-import com.cosc4319.adapti_project.ui.add_event.AddEventFragment;
+import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Gravity;

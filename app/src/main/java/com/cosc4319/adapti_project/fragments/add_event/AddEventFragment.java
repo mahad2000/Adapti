@@ -132,7 +132,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         boolean isAllDay = allDaySwitch.isChecked();
 
         // For all-day events, the time can be empty or a default string like "All Day".
-        String eventTime = allDaySwitch.isChecked() ? "All Day" : newEventTime.getText().toString();
+        //String eventTime = allDaySwitch.isChecked() ? "All Day" : newEventTime.getText().toString();
 
         // Save the event to Firebase using the EventHelper
         EventHelper eventHelper = new EventHelper();
