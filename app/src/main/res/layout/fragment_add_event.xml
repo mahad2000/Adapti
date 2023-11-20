@@ -38,7 +38,6 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:id="@+id/new_event_name"
                 android:background="@drawable/blue_border"
                 android:layout_marginVertical="10dp"
                 android:padding="8dp"
@@ -53,7 +52,6 @@
                 <TextView
                     android:layout_width="150dp"
                     android:layout_height="50dp"
-                    android:id="@+id/new_event_date"
                     android:hint="Event Date"
                     android:textSize="16sp"
                     android:gravity="center_vertical"
@@ -65,7 +63,6 @@
                     android:textColor="@color/adapti_blue"/>
 
                 <Switch
-                    android:id="@+id/all_day_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="end|center"
@@ -79,7 +76,6 @@
             <TextView
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:id="@+id/new_event_time"
                 android:hint="Event Time"
                 android:textSize="16sp"
                 android:gravity="center_vertical"

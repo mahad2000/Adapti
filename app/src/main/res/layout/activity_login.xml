@@ -10,11 +10,6 @@
     android:background="@drawable/adapti_background"
     tools:context=".activities.SignupActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="242dp"
-        app:srcCompat="@drawable/adapti_logo" />
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,9 +34,6 @@
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:textColor="@color/adapti_light_blue"/>
-
-
-
 
             <EditText
                 android:layout_width="match_parent"

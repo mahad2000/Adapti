@@ -10,7 +10,6 @@
     android:background="@drawable/adapti_background"
     tools:context=".activities.SignupActivity">
     <TextView
-        android:id="@+id/textHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
