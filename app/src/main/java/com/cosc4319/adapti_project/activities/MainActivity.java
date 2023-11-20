@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project;
+package com.cosc4319.adapti_project.activities;
 import android.os.Bundle;
 import android.app.Dialog;
 import com.cosc4319.adapti_project.ui.add_event.AddEventFragment;
@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.Manifest;

@@ -1,4 +1,4 @@
-package com.cosc4319.adapti_project.ui.add_event;
+package com.cosc4319.adapti_project.fragments.add_event;
 
 
 import android.app.DatePickerDialog;
@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,14 +20,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
-import com.cosc4319.adapti_project.DatePickerFragment;
+import com.cosc4319.adapti_project.fragments.DatePickerFragment;
 import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.FragmentAddEventBinding;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
@@ -37,11 +41,12 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     private String currentDateString;
     private Button saveEventButton;
     private TextView newEventTime;
-    private Calendar selectedTime = Calendar.getInstance();
+    private final Calendar selectedTime = Calendar.getInstance();
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_event, container, false);
         binding = FragmentAddEventBinding.bind(root);
+
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
@@ -58,12 +63,39 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
 
             setEventDataFromVoiceCommand(eventName, eventDate, eventTime, isAllDay);
         }
+        setHasOptionsMenu(true);
+
+        // Check if there are arguments containing selectedDate
+        if (getArguments() != null && getArguments().containsKey("selectedDate")) {
+            Calendar selectedDate = (Calendar) getArguments().getSerializable("selectedDate");
+
+            // Convert the selected date to a formatted string
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+            currentDateString = dateFormat.format(selectedDate.getTime());
+
+            // Log the selected date for debugging
+            Log.d("AddEventFragment", "Selected Date: " + currentDateString);
+
+            // Set the selected date to the newEventDate TextView
+            binding.newEventDate.setText(currentDateString);
+        }
+
+
 
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             //Log.d("EventFragment", "Saving event");
             @Override
             public void onClick(View view) {
                 saveEvent(); // Save the event information
+            }
+        });
+
+        TextView discardEventText = root.findViewById(R.id.discardEventText);
+        discardEventText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Go back to the home page (pop the current fragment from the back stack)
+                requireActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
@@ -90,11 +122,15 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         // Regardless of whether the event is all day, set currentDateString to the actual date.
         currentDateString = eventDate;
     }
+
     private void saveEvent() {
         // Get the event information from your UI elements
         String eventTitle = binding.newEventName.getText().toString();
         // This will be an actual date string, suitable for saving in the database.
         String eventDate = currentDateString;
+        String eventTime = newEventTime.getText().toString();
+        boolean isAllDay = allDaySwitch.isChecked();
+
         // For all-day events, the time can be empty or a default string like "All Day".
         String eventTime = allDaySwitch.isChecked() ? "All Day" : newEventTime.getText().toString();
 
@@ -111,13 +147,10 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         currentDateString = null; // Clear the selected date
         newEventTime.setText("");
 
-        // Restart the fragment by replacing it with a new instance
-        AddEventFragment newFragment = new AddEventFragment();
-        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(this.getId(), newFragment);
-        fragmentTransaction.addToBackStack(null); // Optional: Add the transaction to the back stack
-        fragmentTransaction.commit();
+        // Navigate back to the home page
+        Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
     }
+
 
     private void initializeUIElements() {
         newEventDate = binding.newEventDate;
@@ -204,4 +237,15 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     private void updateDateInView(String selectedDate) {
         newEventDate.setText(selectedDate);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {// Handle the Home Button press
+            // Navigate back to the home page
+            Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

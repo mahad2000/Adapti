@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/adapti_background"
-    tools:context=".SignupActivity">
+    tools:context=".activities.SignupActivity">
     <TextView
         android:id="@+id/textHome"
         android:layout_width="wrap_content"
@@ -29,27 +29,33 @@
             android:padding="24dp"
             android:background="@drawable/blue_border">
 
-            <CalendarView
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/calendar"/>
+                android:text="Welcome"
+                android:textSize="36sp"
+                android:layout_marginVertical="10dp"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="@color/adapti_light_blue"/>
+
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="323dp" />
+
             <Button
+                android:id="@+id/add_event_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add Event"
-                />
+                android:textSize="24sp" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/upcomingEvents_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:gravity="bottom"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="30dp"/>
+
 
 </LinearLayout>
