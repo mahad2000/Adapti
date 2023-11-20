@@ -71,22 +71,36 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     }
     public void setEventDataFromVoiceCommand(String eventName, String eventDate, String eventTime, boolean isAllDay) {
         binding.newEventName.setText(eventName);
-        newEventDate.setText(eventDate);
-        newEventTime.setText(eventTime);
-        allDaySwitch.setChecked(isAllDay);
-        newEventTime.setVisibility(isAllDay ? View.GONE : View.VISIBLE);
+        currentDateString = eventDate;
+
+        // Check if the event is marked as all day and set the UI elements accordingly
+        if(isAllDay){
+            // Instead of setting "All Day" as the date text, set the actual date received from voice command.
+            // The eventDate parameter should be a date string.
+            newEventDate.setText(eventDate);
+            newEventTime.setVisibility(View.GONE); // Hide the time input since it's an all-day event.
+            allDaySwitch.setChecked(true);
+        } else {
+            newEventDate.setText(eventDate); // Set the date text to the actual date.
+            newEventTime.setText(eventTime); // Set the time text to the actual time.
+            newEventTime.setVisibility(View.VISIBLE);
+            allDaySwitch.setChecked(false);
+        }
+
+        // Regardless of whether the event is all day, set currentDateString to the actual date.
+        currentDateString = eventDate;
     }
     private void saveEvent() {
         // Get the event information from your UI elements
         String eventTitle = binding.newEventName.getText().toString();
+        // This will be an actual date string, suitable for saving in the database.
         String eventDate = currentDateString;
-        String eventTime = newEventTime.getText().toString();
-        boolean isAllDay = allDaySwitch.isChecked();
-
+        // For all-day events, the time can be empty or a default string like "All Day".
+        String eventTime = allDaySwitch.isChecked() ? "All Day" : newEventTime.getText().toString();
 
         // Save the event to Firebase using the EventHelper
         EventHelper eventHelper = new EventHelper();
-        eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
+        eventHelper.addEvent(eventTitle, eventDate, eventTime, allDaySwitch.isChecked());
 
         // Show a toast message indicating that the event is saved
         Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
