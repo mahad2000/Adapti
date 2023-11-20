@@ -1,6 +1,5 @@
 package com.cosc4319.adapti_project.fragments.add_event;
 
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,151 +30,113 @@ import com.cosc4319.adapti_project.utililities.EventHelper;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 public class AddEventFragment extends Fragment implements DatePickerDialog.OnDateSetListener, DatePickerFragment.DatePickerListener {
 
     private FragmentAddEventBinding binding;
+    private EditText newEventName;  // Updated variable name
     private TextView newEventDate;
     private Switch allDaySwitch;
-    private String currentDateString;
     private Button saveEventButton;
     private TextView newEventTime;
+    private String currentDateString;
     private final Calendar selectedTime = Calendar.getInstance();
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_add_event, container, false);
         binding = FragmentAddEventBinding.bind(root);
+        currentDateString = null;
 
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
         if (getArguments() != null) {
-            String eventName = getArguments().getString("eventName", "");
-            String eventDate = getArguments().getString("eventDate", "");
-            String eventTime = getArguments().getString("eventTime", "");
-            boolean isAllDay = getArguments().getBoolean("isAllDay", false);
-
-            Log.d("EventFragment", "Event Name: " + eventName);
-            Log.d("EventFragment", "Event Date: " + eventDate);
-            Log.d("EventFragment", "Event Time: " + eventTime);
-            Log.d("EventFragment", "Event is All Day: " + isAllDay);
-
-            setEventDataFromVoiceCommand(eventName, eventDate, eventTime, isAllDay);
+            setEventDataFromVoiceCommand(getArguments());
         }
-        setHasOptionsMenu(true);
 
         // Check if there are arguments containing selectedDate
         if (getArguments() != null && getArguments().containsKey("selectedDate")) {
-            Calendar selectedDate = (Calendar) getArguments().getSerializable("selectedDate");
-
-            // Convert the selected date to a formatted string
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-            currentDateString = dateFormat.format(selectedDate.getTime());
-
-            // Log the selected date for debugging
-            Log.d("AddEventFragment", "Selected Date: " + currentDateString);
-
-            // Set the selected date to the newEventDate TextView
-            binding.newEventDate.setText(currentDateString);
+            handleSelectedDate(getArguments());
         }
 
-
-
-        saveEventButton.setOnClickListener(new View.OnClickListener() {
-            //Log.d("EventFragment", "Saving event");
-            @Override
-            public void onClick(View view) {
-                saveEvent(); // Save the event information
-            }
-        });
-
+        saveEventButton.setOnClickListener(view -> saveEvent());
         TextView discardEventText = root.findViewById(R.id.discardEventText);
-        discardEventText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Go back to the home page (pop the current fragment from the back stack)
-                requireActivity().getSupportFragmentManager().popBackStack();
-            }
-        });
+        discardEventText.setOnClickListener(view -> requireActivity().getSupportFragmentManager().popBackStack());
 
         return root;
     }
-    public void setEventDataFromVoiceCommand(String eventName, String eventDate, String eventTime, boolean isAllDay) {
-        binding.newEventName.setText(eventName);
+
+    private void initializeUIElements() {
+        newEventName = binding.newEventName;  // Updated variable name
+        newEventDate = binding.newEventDate;
+        newEventTime = binding.newEventTime;
+        allDaySwitch = binding.allDaySwitch;
+    }
+
+    private void setEventDataFromVoiceCommand(Bundle arguments) {
+        String eventName = arguments.getString("eventName", "");
+        String eventDate = arguments.getString("eventDate", "");
+        String eventTime = arguments.getString("eventTime", "");
+        boolean isAllDay = arguments.getBoolean("isAllDay", false);
+
+        Log.d("EventFragment", "Event Name: " + eventName);
+        Log.d("EventFragment", "Event Date: " + eventDate);
+        Log.d("EventFragment", "Event Time: " + eventTime);
+        Log.d("EventFragment", "Event is All Day: " + isAllDay);
+
+        newEventName.setText(eventName);  // Updated variable name
         currentDateString = eventDate;
 
-        // Check if the event is marked as all day and set the UI elements accordingly
-        if(isAllDay){
-            // Instead of setting "All Day" as the date text, set the actual date received from voice command.
-            // The eventDate parameter should be a date string.
+        if (isAllDay) {
             newEventDate.setText(eventDate);
-            newEventTime.setVisibility(View.GONE); // Hide the time input since it's an all-day event.
+            newEventTime.setVisibility(View.GONE);
             allDaySwitch.setChecked(true);
         } else {
-            newEventDate.setText(eventDate); // Set the date text to the actual date.
-            newEventTime.setText(eventTime); // Set the time text to the actual time.
+            newEventDate.setText(eventDate);
+            newEventTime.setText(eventTime);
             newEventTime.setVisibility(View.VISIBLE);
             allDaySwitch.setChecked(false);
         }
+    }
 
-        // Regardless of whether the event is all day, set currentDateString to the actual date.
-        currentDateString = eventDate;
+    private void handleSelectedDate(Bundle arguments) {
+        Calendar selectedDate = (Calendar) arguments.getSerializable("selectedDate");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        currentDateString = dateFormat.format(selectedDate.getTime());
+        Log.d("AddEventFragment", "Selected Date: " + currentDateString);
+        binding.newEventDate.setText(currentDateString);
     }
 
     private void saveEvent() {
-        // Get the event information from your UI elements
         String eventTitle = binding.newEventName.getText().toString();
-        // This will be an actual date string, suitable for saving in the database.
         String eventDate = currentDateString;
         String eventTime = newEventTime.getText().toString();
         boolean isAllDay = allDaySwitch.isChecked();
 
-        // For all-day events, the time can be empty or a default string like "All Day".
-        //String eventTime = allDaySwitch.isChecked() ? "All Day" : newEventTime.getText().toString();
-
-        // Save the event to Firebase using the EventHelper
         EventHelper eventHelper = new EventHelper();
-        eventHelper.addEvent(eventTitle, eventDate, eventTime, allDaySwitch.isChecked());
+        eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
 
-        // Show a toast message indicating that the event is saved
-        //Toast.makeText(requireContext(), "Event saved", Toast.LENGTH_SHORT).show();
-
-        // Clear the UI elements or perform any other necessary actions to prepare for the next event
-        binding.newEventName.setText(""); // Clear the event name
-        allDaySwitch.setChecked(false); // Reset the all-day switch
-        currentDateString = null; // Clear the selected date
+        binding.newEventName.setText("");
+        allDaySwitch.setChecked(false);
+        currentDateString = null;
         newEventTime.setText("");
 
-        // Navigate back to the home page
         Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
     }
 
 
-    private void initializeUIElements() {
-        newEventDate = binding.newEventDate;
-        newEventTime = binding.newEventTime;
-        allDaySwitch = binding.allDaySwitch;
-
-        // Initialize other UI elements if needed
-    }
 
     private void setupEventListeners() {
         AddEventViewModel addEventViewModel = new ViewModelProvider(this).get(AddEventViewModel.class);
-        final TextView newEventName = binding.newEventName;
-
         addEventViewModel.getText().observe(getViewLifecycleOwner(), newEventName::setText);
 
-        newEventDate.setOnClickListener(view -> openDatePicker());
-        newEventTime.setOnClickListener(view -> openTimePicker());
+        binding.newEventDate.setOnClickListener(view -> openDatePicker());
+        binding.newEventTime.setOnClickListener(view -> openTimePicker());
         allDaySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             handleAllDaySwitch(isChecked);
-            if (isChecked) {
-                newEventTime.setVisibility(View.GONE); // Hide the time picker
-            } else {
-                newEventTime.setVisibility(View.VISIBLE); // Show the time picker
-            }
+            newEventTime.setVisibility(isChecked ? View.GONE : View.VISIBLE);
         });
     }
 
@@ -183,34 +145,32 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         ((DatePickerFragment) datePicker).setDatePickerListener(this);
         datePicker.show(getActivity().getSupportFragmentManager(), "date picker");
     }
+
     private void openTimePicker() {
         if (allDaySwitch.isChecked()) {
-            // If it is checked, do not open the time picker
             return;
         }
+
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 requireContext(),
-                (view, hourOfDay, minute) -> {
-                    // Handle the selected time
-                    selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    selectedTime.set(Calendar.MINUTE, minute);
-
-                    // Format and display the selected time
-                    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-                    String formattedTime = timeFormat.format(selectedTime.getTime());
-                    newEventTime.setText(formattedTime);
-                },
+                (view, hourOfDay, minute) -> handleSelectedTime(hourOfDay, minute),
                 selectedTime.get(Calendar.HOUR_OF_DAY),
                 selectedTime.get(Calendar.MINUTE),
-                false // set true if you want 24-hour format
+                false
         );
 
         timePickerDialog.show();
     }
+
+    private void handleSelectedTime(int hourOfDay, int minute) {
+        selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        selectedTime.set(Calendar.MINUTE, minute);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        newEventTime.setText(timeFormat.format(selectedTime.getTime()));
+    }
+
     private void handleAllDaySwitch(boolean isChecked) {
         // Handle the switch state (isChecked) here
-        boolean isAllDay = isChecked;
-
         // Additional logic can be added here if needed
     }
 
@@ -240,12 +200,10 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {// Handle the Home Button press
-            // Navigate back to the home page
+        if (item.getItemId() == android.R.id.home) {
             Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
