@@ -107,7 +107,8 @@
                 android:id="@+id/signup_button"
                 android:textSize="18sp"
                 android:backgroundTint="@color/adapti_blue"
-                app:cornerRadius = "20dp"/>
+                app:cornerRadius="20dp"/>
+
 
             <TextView
                 android:layout_width="wrap_content"
