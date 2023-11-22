@@ -3,6 +3,7 @@ package com.cosc4319.adapti_project.utililities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,12 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
     private List<Event> eventList;
     private Context context;  // Add a reference to the context
+    private final EventHelper eventHelper;
 
     public EventAdapter(List<Event> eventList, Context context) {
         this.eventList = eventList;
         this.context = context;
+        this.eventHelper = new EventHelper();
     }
 
     @NonNull
@@ -39,6 +42,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         // Binding data to the ViewHolder
         Event event = eventList.get(position);
+
 
         // Setting the event title
         holder.textEventTitle.setText(event.getEventTitle());
@@ -96,6 +100,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     private void showDeleteConfirmationDialog(int position) {
+        Event event = eventList.get(position);
+        String eventID = event.getEventID(); // Use the method to get the event ID
+
+        Log.d("EventAdapter", "Attempting to delete event with ID: " + eventID); // Add this line
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Confirm Delete");
         builder.setMessage("Are you sure you want to delete this event?");
@@ -103,8 +112,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Handle delete confirmation
-                Toast.makeText(context, "Delete confirmed for event at position " + position, Toast.LENGTH_SHORT).show();
-                // Add code to delete the event
+                String del = "Attempt Delete: " + eventID;
+                Log.d("EventAdapter", del);
+                Toast.makeText(context, "Delete confirmed for event with ID " + eventID, Toast.LENGTH_SHORT).show();
+
+                // Check if eventID is null before attempting to delete
+                if (eventID != null) {
+                    // Use the existing EventHelper instance instead of creating a new one
+                    eventHelper.deleteEvent(eventID);
+
+                    // Remove the event from the RecyclerView
+                    eventList.remove(position);
+                    notifyItemRemoved(position);
+                } else {
+                    Log.e("EventAdapter", "EventID is null. Cannot delete the event.");
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -116,4 +138,5 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         });
         builder.show();
     }
+
 }

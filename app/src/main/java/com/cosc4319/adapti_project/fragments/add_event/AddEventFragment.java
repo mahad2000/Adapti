@@ -1,7 +1,9 @@
 package com.cosc4319.adapti_project.fragments.add_event;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,20 +106,86 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     private void saveEvent() {
-        String eventTitle = binding.newEventName.getText().toString();
+        String eventTitle = binding.newEventName.getText().toString().trim();  // Trim to handle spaces
         String eventDate = currentDateString;
-        String eventTime = newEventTime.getText().toString();
+        String eventTime = newEventTime.getText().toString().trim();  // Trim to handle spaces
         boolean isAllDay = allDaySwitch.isChecked();
 
-        EventHelper eventHelper = new EventHelper();
-        eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
+        // Check if both eventTitle and currentDateString are not empty
+        if (!eventTitle.isEmpty() && currentDateString != null) {
+            EventHelper eventHelper = new EventHelper();
 
-        binding.newEventName.setText("");
-        allDaySwitch.setChecked(false);
-        currentDateString = null;
-        newEventTime.setText("");
+            // Check if the time is empty
+            if (eventTime.isEmpty()) {
+                // Show a dialog for saving without time or canceling
+                showSaveWithoutTimeDialog(eventTitle, eventDate, isAllDay);
+            } else {
+                // Save the event with the provided time
+                eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
 
-        Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+                binding.newEventName.setText("");
+                allDaySwitch.setChecked(false);
+                currentDateString = null;
+                newEventTime.setText("");
+
+                Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+            }
+        } else {
+            // Show a dialog for incomplete event information
+            showIncompleteEventDialog();
+        }
+    }
+
+    private void showSaveWithoutTimeDialog(final String eventTitle, final String eventDate, final boolean isAllDay) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Save Without Time");
+        builder.setMessage("Event time is not specified. Do you want to save it without time?");
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Save the event without time
+                EventHelper eventHelper = new EventHelper();
+                eventHelper.addEvent(eventTitle, eventDate, "", isAllDay);
+
+                binding.newEventName.setText("");
+                allDaySwitch.setChecked(false);
+                currentDateString = null;
+                newEventTime.setText("");
+
+                Navigation.findNavController(requireView()).navigate(R.id.navigation_home);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Cancel the save operation
+                dialog.dismiss();
+            }
+        });
+
+        builder.show();
+    }
+    private void showIncompleteEventDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Incomplete Event");
+
+        // Check which condition is not met and set the appropriate message
+        if (binding.newEventName.getText().toString().trim().isEmpty()) {
+            builder.setMessage("Event title is empty. Please enter a title.");
+        } else if (currentDateString == null) {
+            builder.setMessage("Event date is not selected. Please select a date.");
+        }
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Dismiss the dialog
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     private void setupEventListeners() {

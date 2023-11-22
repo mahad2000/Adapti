@@ -55,10 +55,29 @@ public class EventHelper {
             Date eventDate = parseDateString(eventDateString);
 
             // Create an Event object to store the event data
-            Event event = new Event(eventTitle, eventDate, eventTime, isAllDay);
+            Event event = new Event(eventTitle, eventDate, eventTime, isAllDay, eventId);
 
             // Save the event data to the Firebase database under the user's 'events' node
             userEventsRef.setValue(event);
+        } else {
+            // Handle the case when no user is logged in
+        }
+    }
+
+    public void deleteEvent(String eventID) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Reference to the user's events under their unique ID
+            DatabaseReference userEventsRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(userId)
+                    .child("events")
+                    .child(eventID);
+
+            userEventsRef.removeValue(); // Remove the event using the eventID
         } else {
             // Handle the case when no user is logged in
         }

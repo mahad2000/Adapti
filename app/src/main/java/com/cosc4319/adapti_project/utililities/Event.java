@@ -5,10 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Event {
-    private String eventTitle;
+    private String eventTitle, eventID, eventTime;
     private Date eventDate;
     private boolean allDay;
-    private String eventTime;
 
     public Event() {
         // Default constructor required for Firebase
@@ -19,6 +18,13 @@ public class Event {
         this.eventDate = eventDate;
         this.eventTime = eventTime;
         this.allDay = allDay;
+    }
+    public Event(String eventTitle, Date eventDate, String eventTime, boolean allDay, String eventID) {
+        this.eventTitle = eventTitle;
+        this.eventDate = eventDate;
+        this.eventTime = eventTime;
+        this.allDay = allDay;
+        this.eventID = eventID;
     }
 
     public static Event createFromFirebaseData(String eventTitle, String eventDateString, String eventTime, boolean isAllDay) {
@@ -35,18 +41,18 @@ public class Event {
         }
     }
 
+    public String getEventID() {
+        return eventID;
+    }
     public String getEventTitle() {
         return eventTitle;
     }
-
     public Date getEventDate() {
         return eventDate;
     }
-
     public boolean isAllDay() {
         return allDay;
     }
-
     public String getEventTime() {
         return eventTime;
     }
@@ -55,7 +61,6 @@ public class Event {
         SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
         return dayFormat.format(eventDate); // Extracts the day
     }
-
     public String getMonth() {
         SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
         return monthFormat.format(eventDate); // Extracts the month

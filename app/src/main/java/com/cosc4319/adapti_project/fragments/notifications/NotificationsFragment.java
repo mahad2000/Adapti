@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ public class NotificationsFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventAdapter eventAdapter;
     private EventHelper eventHelper;
+    private TextView titleTextView;
 
     @Nullable
     @Override
@@ -39,6 +41,8 @@ public class NotificationsFragment extends Fragment {
         // Initialize EventHelper
         eventHelper = new EventHelper();
 
+        titleTextView = view.findViewById(R.id.title);
+
         // Retrieve events from Firebase
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -49,9 +53,13 @@ public class NotificationsFragment extends Fragment {
                     // Update the RecyclerView with the retrieved events
                     EventAdapter eventAdapter = new EventAdapter(eventList, getActivity());
                     recyclerView.setAdapter(eventAdapter);
+                    if ( eventList.size() < 1 ){
+                        titleTextView.setText("No Upcoming Events");
+                    }
                 }
             });
         }
+
 
         return view;
     }
