@@ -30,6 +30,14 @@
             android:padding="20dp"
             />
 
+        <Button
+            android:id="@+id/readEventsButton"
+            android:layout_width="362dp"
+            android:layout_height="113dp"
+            android:drawableLeft="@drawable/p"
+            android:text="Read Events" />
+
+
     </LinearLayout>
 
 
