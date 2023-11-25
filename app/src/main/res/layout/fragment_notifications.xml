@@ -34,8 +34,11 @@
             android:id="@+id/readEventsButton"
             android:layout_width="362dp"
             android:layout_height="113dp"
+            android:textStyle="bold"
             android:drawableLeft="@drawable/p"
-            android:text="Read Events" />
+            android:rotationX="4"
+            android:text="Read Events"
+            android:textSize="36sp" />
 
 
     </LinearLayout>
