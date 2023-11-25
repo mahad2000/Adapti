@@ -2,6 +2,7 @@ package com.cosc4319.adapti_project.activities;
 import android.os.Bundle;
 import android.app.Dialog;
 import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
+import android.content.DialogInterface;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -187,14 +188,33 @@ public class MainActivity extends AppCompatActivity {
             // Handle the case where no user is logged in
         }
     }
+    private void logoutUser() {
+        FirebaseAuth.getInstance().signOut();
+        // Redirect to login screen
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
     private void displayUserInfo(String name, String email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Profile Information");
         builder.setMessage("Name: " + name + "\nEmail: " + email);
-        builder.setPositiveButton("OK", null);
+
+        // Adding a "Logout" button
+        builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logoutUser(); // Call the logoutUser method when the Logout button is clicked
+            }
+        });
+
+        // Adding an "OK" button to simply close the dialog
+        builder.setNegativeButton("OK", null);
+
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     private void showPopupWithText(String text) {
         // Inflate the popup layout
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
