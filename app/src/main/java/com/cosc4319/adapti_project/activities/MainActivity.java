@@ -3,7 +3,13 @@ import android.os.Bundle;
 import android.app.Dialog;
 import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
 import android.content.DialogInterface;
+import android.speech.tts.TextToSpeech;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 
+
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Gravity;
@@ -17,6 +23,8 @@ import androidx.core.content.ContextCompat;
 
 import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.ActivityMainBinding;
+import com.cosc4319.adapti_project.utililities.Event;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.Manifest;
 import android.content.Intent;
@@ -45,14 +53,17 @@ import com.google.firebase.auth.FirebaseUser;
 import android.app.AlertDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private TextView dialogText;
+    private TextToSpeech textToSpeech;
     public static final Integer RecordAudioRequestCode = 1;
     private SpeechRecognizer speechRecognizer;
     private EditText editText;
     private ImageView micButton;
+    private EventHelper eventHelper;
 
     private ActivityMainBinding binding;
 
@@ -62,6 +73,16 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+        eventHelper = new EventHelper();
+
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech.setLanguage(Locale.getDefault());
+            }
+        });
+        ImageView readEventsIcon = findViewById(R.id.readEventsIcon);
+        readEventsIcon.setOnClickListener(v -> readEvents());
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestRecordAudioPermission();
@@ -123,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
                     interpretCommand(spokenText);
                 }
             }
-
-
 
             @Override
             public void onPartialResults(Bundle bundle) {
@@ -312,6 +331,18 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
     }
+    private void readEvents() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            eventHelper.getEvents(userId, new EventHelper.EventDataListener() {
+                @Override
+                public void onDataLoaded(List<Event> eventList) {
+                    // Read events logic here
+                }
+            });
+        }
+    }
 
 
 
@@ -320,6 +351,10 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (speechRecognizer != null) {
             speechRecognizer.destroy();
+        }
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
         }
     }
 }
