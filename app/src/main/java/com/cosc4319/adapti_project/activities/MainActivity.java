@@ -1,58 +1,50 @@
 package com.cosc4319.adapti_project.activities;
-import android.os.Bundle;
-import android.app.Dialog;
-import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
-import android.content.DialogInterface;
-import android.speech.tts.TextToSpeech;
+
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import com.cosc4319.adapti_project.utililities.EventHelper;
-
-
+import android.os.Build;
+import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.view.LayoutInflater;
-import android.view.View;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.cosc4319.adapti_project.R;
-import com.cosc4319.adapti_project.databinding.ActivityMainBinding;
-import com.cosc4319.adapti_project.utililities.Event;
-import com.cosc4319.adapti_project.utililities.EventHelper;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+
+import com.cosc4319.adapti_project.R;
+import com.cosc4319.adapti_project.databinding.ActivityMainBinding;
+import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
+import com.cosc4319.adapti_project.utililities.Event;
+import com.cosc4319.adapti_project.utililities.EventHelper;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import android.app.AlertDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -86,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
         });
         ImageView readEventsIcon = findViewById(R.id.readEventsIcon);
         readEventsIcon.setOnClickListener(v -> readEvents());
-
-
 
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -176,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_add, R.id.navigation_notifications)
@@ -191,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RecordAudioRequestCode);
         }
     }
+
     private void interpretCommand(String command) {
         // Check if the command starts with "create event"
         if (command.toLowerCase().startsWith("create event")) {
@@ -199,12 +189,13 @@ public class MainActivity extends AppCompatActivity {
 
             // Call the createEvent method with the command and the isAllDay flag
             createEvent(command, isAllDay);
-        }else if (command.startsWith("edit event")) {
+        } else if (command.startsWith("edit event")) {
             editEvent(command);
         } else if (command.startsWith("discard event")) {
             discardEvent(command);
         }
     }
+
     private void showUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -288,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
     private void applyTheme(int themeId) {
         setTheme(themeId);
     }
+
     private void logoutUser() {
         FirebaseAuth.getInstance().signOut();
         // Redirect to login screen
@@ -295,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
     private void displayUserInfo(String name, String email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Profile Information");
@@ -333,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
         // Show the popup window
         popupWindow.showAtLocation(binding.getRoot(), Gravity.CENTER, 0, 0);
     }
+
     private String parseDate(String dateString) {
         try {
             // Adjust the input format to match the expected format of dateString
@@ -359,7 +353,6 @@ public class MainActivity extends AppCompatActivity {
             return dateString;
         }
     }
-
 
 
     private void createEvent(String command, boolean isAllDay) {
@@ -407,11 +400,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == RecordAudioRequestCode && grantResults.length > 0 ){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
+        if (requestCode == RecordAudioRequestCode && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void readEvents() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -527,8 +521,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private void discardEvent(String command) {
         // Extract the event name from the command
         String eventName = command.substring("discard event".length()).trim();
@@ -547,9 +539,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
 
     @Override
