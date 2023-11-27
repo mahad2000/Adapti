@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/adapti_background"
+    android:background="?attr/colorPrimary"
     tools:context=".activities.SignupActivity">
 
     <androidx.cardview.widget.CardView
@@ -23,8 +22,8 @@
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
             android:padding="24dp"
-            android:backgroundTint="@color/white"
-            android:background="@drawable/blue_border">
+            android:backgroundTint="?android:attr/windowBackground"
+            android:background="?attr/colorSurface">
 
             <TextView
                 android:layout_width="match_parent"
@@ -35,19 +34,19 @@
                 android:layout_marginVertical="10dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
-                android:textColor="@color/adapti_light_blue"/>
+                android:textColor="?attr/colorPrimary"/>
 
             <EditText
                 android:id="@+id/newEventName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/blue_border"
+                android:background="@drawable/edit_text_outline"
                 android:layout_marginVertical="10dp"
                 android:padding="8dp"
                 android:hint="Event Title"
                 android:drawableLeft="@drawable/new_event_icon"
                 android:drawablePadding="8dp"
-                android:textColor="@color/black"/>
+                android:textColor="?android:attr/textColorPrimary"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,12 +59,12 @@
                     android:hint="Event Date"
                     android:textSize="16sp"
                     android:gravity="center_vertical"
-                    android:background="@drawable/blue_border"
+                    android:background="@drawable/edit_text_outline"
                     android:layout_marginVertical="10dp"
                     android:padding="8dp"
                     android:drawableLeft="@drawable/calendar_icon_blue"
                     android:drawablePadding="8dp"
-                    android:textColor="@color/adapti_blue"/>
+                    android:textColor="?attr/colorPrimary"/>
 
                 <Switch
                     android:id="@+id/allDaySwitch"
@@ -73,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="end|center"
                     android:layout_gravity="end|center"
+
                     android:text="All Day"
                     android:padding="24dp"/>
             </LinearLayout>
@@ -84,12 +84,12 @@
                 android:hint="Event Time"
                 android:textSize="16sp"
                 android:gravity="center_vertical"
-                android:background="@drawable/blue_border"
+                android:background="@drawable/edit_text_outline"
                 android:layout_marginVertical="10dp"
                 android:padding="8dp"
                 android:drawableLeft="@drawable/event_time_icon"
                 android:drawablePadding="8dp"
-                android:textColor="@color/adapti_blue"/>
+                android:textColor="?attr/colorPrimary"/>
 
             <Button
                 android:id="@+id/save_event_button"
@@ -98,7 +98,8 @@
                 android:text="Save Event"
                 android:textSize="18sp"
                 android:layout_marginVertical="10dp"
-                android:backgroundTint="@color/adapti_blue"
+                android:background="?attr/colorSecondary"
+                android:textColor="?attr/colorOnSecondary"
                 app:cornerRadius="20dp"/>
 
             <TextView
@@ -109,7 +110,7 @@
                 android:layout_marginVertical="10dp"
                 android:padding="8dp"
                 android:text="Discard Event"
-                android:textColor="@color/adapti_blue"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="18sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
