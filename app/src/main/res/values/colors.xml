@@ -6,4 +6,21 @@
     <color name="adapti_light_blue">#3D65A5</color>
     <color name="red">#AD0C00</color>
 
+    <!-- Colors for Deuteranopia (red-green color blindness) -->
+    <color name="deuteranopia_friendly_primary">#447C2B</color>
+    <color name="deuteranopia_friendly_primary_variant">#6FA350</color>
+    <color name="deuteranopia_friendly_secondary">#A6531A</color>
+    <color name="deuteranopia_friendly_secondary_variant">#E18549</color>
+
+    <!-- Colors for Protanopia (red-green color blindness) -->
+    <color name="protanopia_friendly_primary">#3498DB</color>
+    <color name="protanopia_friendly_primary_variant">#5DA7E6</color>
+    <color name="protanopia_friendly_secondary">#F39C12</color>
+    <color name="protanopia_friendly_secondary_variant">#FFB84D</color>
+
+    <!-- Colors for Tritanopia (blue-yellow color blindness) -->
+    <color name="tritanopia_friendly_primary">#E74C3C</color>
+    <color name="tritanopia_friendly_primary_variant">#FF6654</color>
+    <color name="tritanopia_friendly_secondary">#27AE60</color>
+    <color name="tritanopia_friendly_secondary_variant">#52D88C</color>
 </resources>

@@ -50,7 +50,7 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         View root = inflater.inflate(R.layout.fragment_add_event, container, false);
         binding = FragmentAddEventBinding.bind(root);
         currentDateString = null;
-        
+
         if (getArguments() != null) {
             populateEventDetails(getArguments());
         }

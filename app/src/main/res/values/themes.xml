@@ -1,16 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Base application theme -->
     <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary Brand Color -->
         <item name="colorPrimary">@color/adapti_blue</item>
         <item name="colorPrimaryVariant">@color/adapti_blue</item>
         <item name="colorOnPrimary">@color/white</item>
 
-        <!-- Primary Brand Color -->
         <item name="colorSecondary">@color/adapti_light_blue</item>
         <item name="colorSecondaryVariant">@color/adapti_light_blue</item>
         <item name="colorOnSecondary">@color/black</item>
+    </style>
 
+    <!-- Theme for Deuteranopia (red-green color blindness) -->
+    <style name="Base.Theme.MyApplication.Deuteranopia">
+        <item name="colorPrimary">@color/deuteranopia_friendly_primary</item>
+        <item name="colorPrimaryVariant">@color/deuteranopia_friendly_primary_variant</item>
+        <item name="colorSecondary">@color/deuteranopia_friendly_secondary</item>
+        <item name="colorSecondaryVariant">@color/deuteranopia_friendly_secondary_variant</item>
+    </style>
+
+    <!-- Theme for Protanopia (red-green color blindness) -->
+    <style name="Base.Theme.MyApplication.Protanopia">
+        <item name="colorPrimary">@color/protanopia_friendly_primary</item>
+        <item name="colorPrimaryVariant">@color/protanopia_friendly_primary_variant</item>
+        <item name="colorSecondary">@color/protanopia_friendly_secondary</item>
+        <item name="colorSecondaryVariant">@color/protanopia_friendly_secondary_variant</item>
+    </style>
+
+    <!-- Theme for Tritanopia (blue-yellow color blindness) -->
+    <style name="Base.Theme.MyApplication.Tritanopia">
+        <item name="colorPrimary">@color/tritanopia_friendly_primary</item>
+        <item name="colorPrimaryVariant">@color/tritanopia_friendly_primary_variant</item>
+        <item name="colorSecondary">@color/tritanopia_friendly_secondary</item>
+        <item name="colorSecondaryVariant">@color/tritanopia_friendly_secondary_variant</item>
     </style>
 
 </resources>

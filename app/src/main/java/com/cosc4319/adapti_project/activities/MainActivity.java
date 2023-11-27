@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
+        int selectedTheme = getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
+                .getInt("selectedTheme", R.style.Base_Theme_MyApplication);
+        applyTheme(selectedTheme);
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestRecordAudioPermission();
         }
@@ -178,15 +182,86 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user != null) {
             String name = user.getDisplayName(); // Get the user's name
             String email = user.getEmail(); // Get the user's email
 
-            // Display the info in a dialog
-            displayUserInfo(name, email);
+            // Declare the AlertDialog.Builder
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Profile Information");
+            builder.setMessage("Name: " + name + "\nEmail: " + email);
+
+            // Adding a "Logout" button
+            builder.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    logoutUser(); // Call the logoutUser method when the Logout button is clicked
+                }
+            });
+
+            // Adding an "OK" button to simply close the dialog
+            builder.setNegativeButton("OK", null);
+
+            // Add the theme selection option to the dialog
+            builder.setNeutralButton("Change Theme", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showThemeSelectionDialog();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         } else {
             // Handle the case where no user is logged in
         }
+    }
+
+
+    private void showThemeSelectionDialog() {
+        final String[] themes = {"Base Theme", "Deuteranopia Theme", "Protanopia Theme", "Tritanopia Theme"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Theme")
+                .setItems(themes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        int themeId;
+                        switch (which) {
+                            case 0:
+                                themeId = R.style.Base_Theme_MyApplication;
+                                break;
+                            case 1:
+                                themeId = R.style.Base_Theme_MyApplication_Deuteranopia;
+                                break;
+                            case 2:
+                                themeId = R.style.Base_Theme_MyApplication_Protanopia;
+                                break;
+                            case 3:
+                                themeId = R.style.Base_Theme_MyApplication_Tritanopia;
+                                break;
+                            default:
+                                themeId = R.style.Base_Theme_MyApplication;
+                                break;  // Add a break statement for the default case
+                        }
+
+                        // Save the selected theme preference
+                        getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
+                                .edit()
+                                .putInt("selectedTheme", themeId)
+                                .apply();
+
+                        // Apply the selected theme
+                        applyTheme(themeId);
+                        recreate(); // Recreate the activity to apply the theme changes
+                    }
+                });
+
+        builder.create().show();
+    }
+
+    private void applyTheme(int themeId) {
+        setTheme(themeId);
     }
     private void logoutUser() {
         FirebaseAuth.getInstance().signOut();
