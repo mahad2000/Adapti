@@ -8,7 +8,7 @@
 
         <item name="colorSecondary">@color/adapti_light_blue</item>
         <item name="colorSecondaryVariant">@color/adapti_light_blue</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
     </style>
 
     <!-- Theme for Deuteranopia (red-green color blindness) -->

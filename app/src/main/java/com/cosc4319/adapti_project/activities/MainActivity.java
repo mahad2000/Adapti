@@ -58,14 +58,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int selectedTheme = getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
+                .getInt("selectedTheme", R.style.Base_Theme_MyApplication);
+        applyTheme(selectedTheme);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
 
-        int selectedTheme = getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
-                .getInt("selectedTheme", R.style.Base_Theme_MyApplication);
-        applyTheme(selectedTheme);
+
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestRecordAudioPermission();
