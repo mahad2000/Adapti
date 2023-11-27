@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Button;
 import android.speech.tts.TextToSpeech;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 import androidx.annotation.NonNull;
@@ -103,6 +106,14 @@ public class NotificationsFragment extends Fragment {
             eventHelper.getEvents(userId, new EventHelper.EventDataListener() {
                 @Override
                 public void onDataLoaded(List<Event> eventList) {
+                    // Sort the eventList based on dates
+                    Collections.sort(eventList, new Comparator<Event>() {
+                        @Override
+                        public int compare(Event event1, Event event2) {
+                            return event1.getEventDate().compareTo(event2.getEventDate());
+                        }
+                    });
+
                     StringBuilder eventDetails = new StringBuilder();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
 
@@ -138,7 +149,5 @@ public class NotificationsFragment extends Fragment {
             });
         }
     }
-
-
 
 }

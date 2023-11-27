@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cosc4319.adapti_project.R;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
@@ -27,6 +29,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private final EventHelper eventHelper;
 
     public EventAdapter(List<Event> eventList, Context context) {
+        // Sort the eventList based on dates
+        Collections.sort(eventList, new Comparator<Event>() {
+            @Override
+            public int compare(Event event1, Event event2) {
+                return event1.getEventDate().compareTo(event2.getEventDate());
+            }
+        });
+
         this.eventList = eventList;
         this.context = context;
         this.eventHelper = new EventHelper();
