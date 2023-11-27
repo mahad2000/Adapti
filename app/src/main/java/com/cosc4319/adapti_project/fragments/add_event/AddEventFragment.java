@@ -50,6 +50,10 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         View root = inflater.inflate(R.layout.fragment_add_event, container, false);
         binding = FragmentAddEventBinding.bind(root);
         currentDateString = null;
+        
+        if (getArguments() != null) {
+            populateEventDetails(getArguments());
+        }
 
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
@@ -264,5 +268,31 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void populateEventDetails(Bundle arguments) {
+        String eventName = arguments.getString("eventName", "");
+        String eventDate = arguments.getString("eventDate", "");
+        String eventTime = arguments.getString("eventTime", "");
+        boolean isAllDay = arguments.getBoolean("isAllDay", false);
+        String eventID = arguments.getString("eventID", ""); // Retrieve event ID if needed
+
+        newEventName.setText(eventName);
+        currentDateString = eventDate;
+
+        if (isAllDay) {
+            newEventDate.setText(eventDate);
+            newEventTime.setVisibility(View.GONE);
+            allDaySwitch.setChecked(true);
+        } else {
+            newEventDate.setText(eventDate);
+            newEventTime.setText(eventTime);
+            newEventTime.setVisibility(View.VISIBLE);
+            allDaySwitch.setChecked(false);
+        }
+
+        // If you need to store the event ID for further use
+        // e.g., when updating the event, you can store it as a member variable
+        // this.eventID = eventID;
     }
 }
