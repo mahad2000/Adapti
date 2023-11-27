@@ -23,7 +23,9 @@ public class EventHelper {
     public interface EventDataListener {
         void onDataLoaded(List<Event> eventList);
     }
-
+    public interface EventIdCallback {
+        void onEventIdFound(String eventId);
+    }
     public EventHelper() {
         // Initialize Firebase Database reference
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -91,6 +93,40 @@ public class EventHelper {
             // Handle the case when no user is logged in
         }
     }
+    public void findEventIDByName(String eventName, EventIdCallback callback) {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userEventsRef = eventDatabase
+                    .child(userId)
+                    .child("events");
+
+            userEventsRef.orderByChild("eventTitle").equalTo(eventName).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        // Assuming 'Event' is your model class and it has a 'eventTitle' field
+                        Event event = snapshot.getValue(Event.class);
+                        if (event != null && event.getEventTitle().equals(eventName)) {
+                            callback.onEventIdFound(snapshot.getKey());
+                            return;
+                        }
+                    }
+                    callback.onEventIdFound(null); // Event not found
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Log and handle errors
+                    callback.onEventIdFound(null);
+                }
+            });
+        } else {
+            // Handle case when no user is logged in
+            callback.onEventIdFound(null);
+        }
+    }
+
 
     public void deleteEvent(String eventID) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
