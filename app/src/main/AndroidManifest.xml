@@ -41,5 +41,5 @@
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />
-    </application>\
+    </application>
 </manifest>

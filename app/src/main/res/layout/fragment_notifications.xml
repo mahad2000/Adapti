@@ -5,7 +5,7 @@
     android:paddingHorizontal="16dp"
     android:paddingTop="30dp"
     android:paddingBottom="100dp"
-    android:background="?attr/colorPrimary">
+    android:background="?attr/colorSecondary">
 
     <TextView
         android:id="@+id/title"
@@ -53,7 +53,6 @@
         android:rotationX="4"
         android:text="Read Events"
         android:textSize="36sp"
-        android:background="@drawable/button_outline"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"/>
