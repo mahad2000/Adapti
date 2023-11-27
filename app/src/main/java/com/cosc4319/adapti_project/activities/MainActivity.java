@@ -533,16 +533,16 @@ public class MainActivity extends AppCompatActivity {
         // Extract the event name from the command
         String eventName = command.substring("discard event".length()).trim();
 
-        // Use eventHelper to find the event ID and delete the event
         eventHelper.findEventIDByName(eventName, new EventHelper.EventIdCallback() {
             @Override
             public void onEventIdFound(String eventId) {
                 if (eventId != null) {
+                    // Event ID found, proceed to delete
                     eventHelper.deleteEvent(eventId);
-                    Toast.makeText(MainActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Event '" + eventName + "' deleted", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Handle event not found
-                    Toast.makeText(MainActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                    // Event not found
+                    Toast.makeText(MainActivity.this, "Event '" + eventName + "' not found", Toast.LENGTH_SHORT).show();
                 }
             }
         });
