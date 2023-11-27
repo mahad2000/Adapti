@@ -457,38 +457,61 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void editEvent(String command) {
-        // Example command format: "edit event Old Event Name to New Event Name on New Date at New Time"
+        String eventName = command.substring("edit event".length()).trim();
 
-        String[] parts = command.split(" ");
 
-        if (parts.length < 7) {
-            Log.e("VoiceCommand", "Invalid edit command format");
-            return;
-        }
-
-        String oldEventName = parts[2] + " " + parts[3];
-        String newEventName = parts[5] + " " + parts[6];
-
-        // Initialize newEventDate, newEventTime, and isAllDay
-        String newEventDate = ""; // Default value
-        String newEventTime = ""; // Default value
-        boolean isAllDay = false;  // Default value
-
-        // Further parsing to get newEventDate and newEventTime
-        // The parsing logic will depend on the expected format of your voice command
-
-        // Use eventHelper instance to find the ID of the event to be edited
-        eventHelper.findEventIDByName(oldEventName, new EventHelper.EventIdCallback() {
+        eventHelper.findEventIDByName(eventName, new EventHelper.EventIdCallback() {
             @Override
             public void onEventIdFound(String eventId) {
                 if (eventId != null) {
-                    // Update the event with new details
-                    eventHelper.updateEvent(eventId, newEventName, newEventDate, newEventTime, isAllDay);
+                    eventHelper.getEventById(eventId, new EventHelper.SingleEventDataListener() {
+                        @Override
+                        public void onDataLoaded(Event event) {
+                            if (event != null) {
+                                // Open AddEventFragment with event details
+                                openAddEventFragmentWithDetails(event);
+                            } else {
+                                Toast.makeText(MainActivity.this, "Event details not found", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    Toast.makeText(MainActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
-                    // Optionally, start AddEventFragment with new details
+    private void openAddEventFragmentWithDetails(Event event) {
+        Bundle bundle = new Bundle();
+        bundle.putString("eventName", event.getEventTitle());
+        bundle.putString("eventDate", new SimpleDateFormat("MM/dd/yyyy").format(event.getEventDate()));
+        bundle.putString("eventTime", event.getEventTime());
+        bundle.putBoolean("isAllDay", event.isAllDay());
+        bundle.putString("eventID", event.getEventID());
+
+        AddEventFragment fragment = new AddEventFragment();
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.nav_host_fragment_activity_main, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void fetchEventDetailsAndEdit(String eventId) {
+        // Assuming getEventById method is implemented in EventHelper
+        eventHelper.getEventById(eventId, new EventHelper.SingleEventDataListener() {
+            @Override
+            public void onDataLoaded(Event event) {
+                if (event != null) {
+                    // Pass event details to AddEventFragment
                     Bundle bundle = new Bundle();
-                    bundle.putString("eventName", newEventName);
-                    // Add other details to the bundle...
+                    bundle.putString("eventName", event.getEventTitle());
+                    bundle.putString("eventDate", new SimpleDateFormat("MM/dd/yyyy").format(event.getEventDate()));
+                    bundle.putString("eventTime", event.getEventTime());
+                    bundle.putBoolean("isAllDay", event.isAllDay());
+                    bundle.putString("eventID", eventId); // Include event ID for updating
+
                     AddEventFragment fragment = new AddEventFragment();
                     fragment.setArguments(bundle);
                     getSupportFragmentManager().beginTransaction()
@@ -496,7 +519,8 @@ public class MainActivity extends AppCompatActivity {
                             .addToBackStack(null)
                             .commit();
                 } else {
-                    // Handle the case where the event is not found
+                    // Handle event details not found
+                    Toast.makeText(MainActivity.this, "Event details not found", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -504,32 +528,26 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     private void discardEvent(String command) {
-        String[] parts = command.split(" ");
+        // Extract the event name from the command
+        String eventName = command.substring("discard event".length()).trim();
 
-        if (parts.length < 3) {
-            Log.e("VoiceCommand", "Invalid discard command format");
-            return;
-        }
-
-        String eventName = parts[2];
-        for (int i = 3; i < parts.length; i++) {
-            eventName += " " + parts[i];
-        }
-
-        // Implement logic to find the eventID based on eventName
+        // Use eventHelper to find the event ID and delete the event
         eventHelper.findEventIDByName(eventName, new EventHelper.EventIdCallback() {
             @Override
             public void onEventIdFound(String eventId) {
                 if (eventId != null) {
                     eventHelper.deleteEvent(eventId);
-            // Provide feedback to the user
-        } else {
-            // Handle event not found
+                    Toast.makeText(MainActivity.this, "Event deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle event not found
+                    Toast.makeText(MainActivity.this, "Event not found", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
 
 
 

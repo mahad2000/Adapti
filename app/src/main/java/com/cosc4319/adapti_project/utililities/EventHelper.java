@@ -182,4 +182,35 @@ public class EventHelper {
             return null;
         }
     }
+    public interface SingleEventDataListener {
+        void onDataLoaded(Event event);
+    }
+
+    public void getEventById(String eventID, final SingleEventDataListener listener) {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userEventRef = eventDatabase.child(userId).child("events").child(eventID);
+
+            userEventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Event event = dataSnapshot.getValue(Event.class);
+                    if (listener != null) {
+                        listener.onDataLoaded(event);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                    listener.onDataLoaded(null);
+                }
+            });
+        } else {
+            // Handle case when no user is logged in
+            listener.onDataLoaded(null);
+        }
+    }
+
 }
