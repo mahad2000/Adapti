@@ -59,6 +59,7 @@ public class NotificationsFragment extends Fragment {
                     EventAdapter eventAdapter = new EventAdapter(eventList, getActivity());
                     recyclerView.setAdapter(eventAdapter);
                     if (eventList.size() < 1) {
+                        titleTextView.setTextSize(30);
                         titleTextView.setText("No Upcoming Events");
                     }
                 }
