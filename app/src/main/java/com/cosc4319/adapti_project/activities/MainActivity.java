@@ -193,7 +193,11 @@ public class MainActivity extends AppCompatActivity {
 
             // Call the createEvent method with the command and the isAllDay flag
             createEvent(command, isAllDay);
-        }
+        }//else if (command.startsWith("edit event")) {
+            // editEvent(command);
+        //} else if (command.startsWith("discard event")) {
+        //    discardEvent(command);
+       // }
     }
     private void showUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -338,11 +342,42 @@ public class MainActivity extends AppCompatActivity {
             eventHelper.getEvents(userId, new EventHelper.EventDataListener() {
                 @Override
                 public void onDataLoaded(List<Event> eventList) {
-                    // Read events logic here
+                    StringBuilder eventDetails = new StringBuilder();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+
+                    if (!eventList.isEmpty()) {
+                        eventDetails.append("Your Upcoming Events:\n");
+                    }
+
+                    boolean isFirstEvent = true;
+                    for (Event event : eventList) {
+                        if (!isFirstEvent) {
+                            eventDetails.append("Your Next Event:\n");
+                        }
+                        isFirstEvent = false;
+
+                        String formattedDate = dateFormat.format(event.getEventDate());
+                        eventDetails.append(event.getEventTitle())
+                                .append(", Date: ").append(formattedDate);
+
+                        if (event.isAllDay()) {
+                            eventDetails.append(", Time: All Day");
+                        } else {
+                            eventDetails.append(", Time: ").append(event.getEventTime());
+                        }
+                        eventDetails.append(".\n");
+                    }
+
+                    if (!eventDetails.toString().isEmpty()) {
+                        textToSpeech.speak(eventDetails.toString(), TextToSpeech.QUEUE_FLUSH, null, null);
+                    } else {
+                        textToSpeech.speak("No upcoming events", TextToSpeech.QUEUE_FLUSH, null, null);
+                    }
                 }
             });
         }
     }
+
 
 
 
