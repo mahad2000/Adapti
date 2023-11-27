@@ -8,82 +8,86 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
-    <!-- Include your BottomNavigationView -->
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginTop="4dp"
         android:background="@color/white"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- EditText for speech input -->
         <EditText
             android:id="@+id/text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Tap to Speak"
-            android:padding="10dp"
-            app:layout_constraintEnd_toStartOf="@id/microphoneIcon"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
-        <!-- Add a microphone icon (you can set the icon drawable) -->
+            app:layout_constraintEnd_toStartOf="@id/microphoneIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_weight="1" />
+
+        <!-- Microphone icon -->
         <ImageView
             android:id="@+id/microphoneIcon"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:backgroundTint="#F9F8FA"
-            android:paddingRight="10dp"
             android:src="@drawable/ic_microphone"
-            app:layout_constraintBottom_toBottomOf="@id/text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            android:layout_marginStart="0dp"
+            app:layout_constraintStart_toEndOf="@id/text"
+            app:layout_constraintEnd_toStartOf="@id/readEventsIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        <!-- Add an account icon with a dropdown menu -->
+        <!-- Speaker icon for reading events -->
+        <ImageView
+            android:id="@+id/readEventsIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/speaker"
+            android:layout_marginStart="140dp"
+            app:layout_constraintStart_toEndOf="@id/microphoneIcon"
+            app:layout_constraintEnd_toStartOf="@id/accountIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Account icon -->
         <ImageView
             android:id="@+id/accountIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="8dp"
-            android:src="@drawable/account_icon" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/account_icon"
+            android:layout_marginStart="130dp"
+            app:layout_constraintStart_toEndOf="@id/readEventsIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Bottom Navigation View -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
-    <!-- Include the custom toolbar -->
-
-
-    <!-- Include a FrameLayout for your NavHostFragment -->
+    <!-- NavHostFragment for fragment management -->
     <fragment
         android:id="@+id/nav_host_fragment_activity_main"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintVertical_bias="1.0"
         app:navGraph="@navigation/mobile_navigation" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

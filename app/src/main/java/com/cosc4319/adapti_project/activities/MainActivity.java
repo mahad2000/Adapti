@@ -3,7 +3,13 @@ import android.os.Bundle;
 import android.app.Dialog;
 import com.cosc4319.adapti_project.fragments.add_event.AddEventFragment;
 import android.content.DialogInterface;
+import android.speech.tts.TextToSpeech;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 
+
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Gravity;
@@ -17,6 +23,8 @@ import androidx.core.content.ContextCompat;
 
 import com.cosc4319.adapti_project.R;
 import com.cosc4319.adapti_project.databinding.ActivityMainBinding;
+import com.cosc4319.adapti_project.utililities.Event;
+import com.cosc4319.adapti_project.utililities.EventHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.Manifest;
 import android.content.Intent;
@@ -45,14 +53,17 @@ import com.google.firebase.auth.FirebaseUser;
 import android.app.AlertDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private TextView dialogText;
+    private TextToSpeech textToSpeech;
     public static final Integer RecordAudioRequestCode = 1;
     private SpeechRecognizer speechRecognizer;
     private EditText editText;
     private ImageView micButton;
+    private EventHelper eventHelper;
 
     private ActivityMainBinding binding;
 
@@ -62,6 +73,16 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
+        eventHelper = new EventHelper();
+
+        textToSpeech = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                textToSpeech.setLanguage(Locale.getDefault());
+            }
+        });
+        ImageView readEventsIcon = findViewById(R.id.readEventsIcon);
+        readEventsIcon.setOnClickListener(v -> readEvents());
+
 
         int selectedTheme = getSharedPreferences("MyAppPreferences", MODE_PRIVATE)
                 .getInt("selectedTheme", R.style.Base_Theme_MyApplication);
@@ -128,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-
-
             @Override
             public void onPartialResults(Bundle bundle) {
 
@@ -178,7 +197,11 @@ public class MainActivity extends AppCompatActivity {
 
             // Call the createEvent method with the command and the isAllDay flag
             createEvent(command, isAllDay);
-        }
+        }//else if (command.startsWith("edit event")) {
+            // editEvent(command);
+        //} else if (command.startsWith("discard event")) {
+        //    discardEvent(command);
+       // }
     }
     private void showUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -387,6 +410,49 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
         }
     }
+    private void readEvents() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            eventHelper.getEvents(userId, new EventHelper.EventDataListener() {
+                @Override
+                public void onDataLoaded(List<Event> eventList) {
+                    StringBuilder eventDetails = new StringBuilder();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+
+                    if (!eventList.isEmpty()) {
+                        eventDetails.append("Your Upcoming Events:\n");
+                    }
+
+                    boolean isFirstEvent = true;
+                    for (Event event : eventList) {
+                        if (!isFirstEvent) {
+                            eventDetails.append("Your Next Event:\n");
+                        }
+                        isFirstEvent = false;
+
+                        String formattedDate = dateFormat.format(event.getEventDate());
+                        eventDetails.append(event.getEventTitle())
+                                .append(", Date: ").append(formattedDate);
+
+                        if (event.isAllDay()) {
+                            eventDetails.append(", Time: All Day");
+                        } else {
+                            eventDetails.append(", Time: ").append(event.getEventTime());
+                        }
+                        eventDetails.append(".\n");
+                    }
+
+                    if (!eventDetails.toString().isEmpty()) {
+                        textToSpeech.speak(eventDetails.toString(), TextToSpeech.QUEUE_FLUSH, null, null);
+                    } else {
+                        textToSpeech.speak("No upcoming events", TextToSpeech.QUEUE_FLUSH, null, null);
+                    }
+                }
+            });
+        }
+    }
+
 
 
 
@@ -395,6 +461,10 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (speechRecognizer != null) {
             speechRecognizer.destroy();
+        }
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
         }
     }
 }
