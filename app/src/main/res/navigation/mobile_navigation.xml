@@ -7,18 +7,18 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.cosc4319.adapti_project.fragments.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label=""
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_add"
         android:name="com.cosc4319.adapti_project.fragments.add_event.AddEventFragment"
-        android:label="@string/title_add"
+        android:label=""
         tools:layout="@layout/fragment_add_event" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.cosc4319.adapti_project.fragments.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label=""
         tools:layout="@layout/fragment_notifications" />
 </navigation>
