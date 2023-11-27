@@ -3,6 +3,7 @@ package com.cosc4319.adapti_project.utililities;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cosc4319.adapti_project.R;
@@ -67,7 +69,20 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.editImage.setOnClickListener(v -> {
             // Handle click on edit image
             Toast.makeText(context, "Edit clicked for event at position " + position, Toast.LENGTH_SHORT).show();
-            // Add code to navigate to edit page for the event
+
+            // Retrieve the clicked event
+            Event clickedEvent = eventList.get(position);
+
+            // Pass the event information to the AddEventFragment
+            Bundle bundle = new Bundle();
+            bundle.putString("eventName", clickedEvent.getEventTitle());
+            bundle.putString("eventDate", new SimpleDateFormat("MM/dd/yyyy").format(clickedEvent.getEventDate()));
+            bundle.putString("eventTime", clickedEvent.getEventTime());
+            bundle.putBoolean("isAllDay", clickedEvent.isAllDay());
+            bundle.putString("eventID", clickedEvent.getEventID()); // Add event ID if needed
+
+            // Navigate to the AddEventFragment with the event information
+            Navigation.findNavController(v).navigate(R.id.navigation_add, bundle);
         });
 
         holder.deleteImage.setOnClickListener(v -> {
