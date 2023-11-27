@@ -58,6 +58,17 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         saveEventButton = root.findViewById(R.id.save_event_button);
         initializeUIElements();
         setupEventListeners();
+
+        if (getArguments() != null && getArguments().containsKey("eventID")) {
+            // If editing, change the text of the TextView to "Edit Event"
+            binding.TitleText.setText("Edit Event");
+            // Populate event details
+            populateEventDetails(getArguments());
+        } else {
+            // If adding, keep the text as "Add Event"
+            binding.TitleText.setText("Add Event");
+        }
+
         if (getArguments() != null) {
             setEventDataFromVoiceCommand(getArguments());
         }
@@ -110,9 +121,9 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
     }
 
     private void saveEvent() {
-        String eventTitle = binding.newEventName.getText().toString().trim();  // Trim to handle spaces
+        String eventTitle = binding.newEventName.getText().toString().trim();
         String eventDate = currentDateString;
-        String eventTime = newEventTime.getText().toString().trim();  // Trim to handle spaces
+        String eventTime = newEventTime.getText().toString().trim();
         boolean isAllDay = allDaySwitch.isChecked();
 
         // Check if both eventTitle and currentDateString are not empty
@@ -124,8 +135,14 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
                 // Show a dialog for saving without time or canceling
                 showSaveWithoutTimeDialog(eventTitle, eventDate, isAllDay);
             } else {
-                // Save the event with the provided time
-                eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
+                if (getArguments() != null && getArguments().containsKey("eventID")) {
+                    // Editing an existing event
+                    String eventID = getArguments().getString("eventID", "");
+                    eventHelper.updateEvent(eventID, eventTitle, eventDate, eventTime, isAllDay);
+                } else {
+                    // Creating a new event
+                    eventHelper.addEvent(eventTitle, eventDate, eventTime, isAllDay);
+                }
 
                 binding.newEventName.setText("");
                 allDaySwitch.setChecked(false);
@@ -275,24 +292,41 @@ public class AddEventFragment extends Fragment implements DatePickerDialog.OnDat
         String eventDate = arguments.getString("eventDate", "");
         String eventTime = arguments.getString("eventTime", "");
         boolean isAllDay = arguments.getBoolean("isAllDay", false);
-        String eventID = arguments.getString("eventID", ""); // Retrieve event ID if needed
+        String eventID = arguments.getString("eventID", "");
 
-        newEventName.setText(eventName);
+        // Add a null check for newEventName
+        if (newEventName != null) {
+            newEventName.setText(eventName);
+        }
+
         currentDateString = eventDate;
 
         if (isAllDay) {
-            newEventDate.setText(eventDate);
-            newEventTime.setVisibility(View.GONE);
-            allDaySwitch.setChecked(true);
-        } else {
-            newEventDate.setText(eventDate);
-            newEventTime.setText(eventTime);
-            newEventTime.setVisibility(View.VISIBLE);
-            allDaySwitch.setChecked(false);
-        }
+            // Check for null to avoid NullPointerException
+            if (newEventDate != null) {
+                newEventDate.setText(eventDate);
+            }
 
-        // If you need to store the event ID for further use
-        // e.g., when updating the event, you can store it as a member variable
-        // this.eventID = eventID;
+            if (newEventTime != null) {
+                newEventTime.setVisibility(View.GONE);
+            }
+
+            if (allDaySwitch != null) {
+                allDaySwitch.setChecked(true);
+            }
+        } else {
+            if (newEventDate != null) {
+                newEventDate.setText(eventDate);
+            }
+
+            if (newEventTime != null) {
+                newEventTime.setText(eventTime);
+                newEventTime.setVisibility(View.VISIBLE);
+            }
+
+            if (allDaySwitch != null) {
+                allDaySwitch.setChecked(false);
+            }
+        }
     }
 }

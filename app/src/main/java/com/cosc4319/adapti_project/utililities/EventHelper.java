@@ -31,7 +31,35 @@ public class EventHelper {
 
         firebaseAuth = FirebaseAuth.getInstance();
     }
+    public void updateEvent(String eventID, String eventTitle, String eventDateString, String eventTime, boolean isAllDay) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Reference to the user's events under their unique ID
+            DatabaseReference userEventsRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(userId)
+                    .child("events")
+                    .child(eventID);
+
+            if (isAllDay) {
+                eventTime = "";
+            }
+
+            // Parse the eventDate string to Date type
+            Date eventDate = parseDateString(eventDateString);
+
+            // Create an Event object to store the updated event data
+            Event updatedEvent = new Event(eventTitle, eventDate, eventTime, isAllDay, eventID);
+
+            // Update the event data in the Firebase database
+            userEventsRef.setValue(updatedEvent);
+        } else {
+            // Handle the case when no user is logged in
+        }
+    }
     public void addEvent(String eventTitle, String eventDateString, String eventTime, boolean isAllDay) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
