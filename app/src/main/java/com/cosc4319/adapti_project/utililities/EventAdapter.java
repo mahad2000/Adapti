@@ -139,7 +139,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 // Handle delete confirmation
                 String del = "Attempt Delete: " + eventID;
                 Log.d("EventAdapter", del);
-                Toast.makeText(context, "Delete confirmed for event with ID " + eventID, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Delete confirmed for event with ID " + eventID, Toast.LENGTH_SHORT).show();
 
                 // Check if eventID is null before attempting to delete
                 if (eventID != null) {
