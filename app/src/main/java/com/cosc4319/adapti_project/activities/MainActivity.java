@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
 
             // Call the createEvent method with the command and the isAllDay flag
             createEvent(command, isAllDay);
-        }//else if (command.startsWith("edit event")) {
-            // editEvent(command);
-        //} else if (command.startsWith("discard event")) {
-        //    discardEvent(command);
-       // }
+        }else if (command.startsWith("edit event")) {
+            editEvent(command);
+        } else if (command.startsWith("discard event")) {
+            discardEvent(command);
+        }
     }
     private void showUserProfile() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -451,6 +452,82 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+
+    private void editEvent(String command) {
+        // Example command format: "edit event Old Event Name to New Event Name on New Date at New Time"
+
+        String[] parts = command.split(" ");
+
+        if (parts.length < 7) {
+            Log.e("VoiceCommand", "Invalid edit command format");
+            return;
+        }
+
+        String oldEventName = parts[2] + " " + parts[3];
+        String newEventName = parts[5] + " " + parts[6];
+
+        // Initialize newEventDate, newEventTime, and isAllDay
+        String newEventDate = ""; // Default value
+        String newEventTime = ""; // Default value
+        boolean isAllDay = false;  // Default value
+
+        // Further parsing to get newEventDate and newEventTime
+        // The parsing logic will depend on the expected format of your voice command
+
+        // Use eventHelper instance to find the ID of the event to be edited
+        eventHelper.findEventIDByName(oldEventName, new EventHelper.EventIdCallback() {
+            @Override
+            public void onEventIdFound(String eventId) {
+                if (eventId != null) {
+                    // Update the event with new details
+                    eventHelper.updateEvent(eventId, newEventName, newEventDate, newEventTime, isAllDay);
+
+                    // Optionally, start AddEventFragment with new details
+                    Bundle bundle = new Bundle();
+                    bundle.putString("eventName", newEventName);
+                    // Add other details to the bundle...
+                    AddEventFragment fragment = new AddEventFragment();
+                    fragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.nav_host_fragment_activity_main, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                } else {
+                    // Handle the case where the event is not found
+                }
+            }
+        });
+    }
+
+
+
+    private void discardEvent(String command) {
+        String[] parts = command.split(" ");
+
+        if (parts.length < 3) {
+            Log.e("VoiceCommand", "Invalid discard command format");
+            return;
+        }
+
+        String eventName = parts[2];
+        for (int i = 3; i < parts.length; i++) {
+            eventName += " " + parts[i];
+        }
+
+        // Implement logic to find the eventID based on eventName
+        eventHelper.findEventIDByName(eventName, new EventHelper.EventIdCallback() {
+            @Override
+            public void onEventIdFound(String eventId) {
+                if (eventId != null) {
+                    eventHelper.deleteEvent(eventId);
+            // Provide feedback to the user
+        } else {
+            // Handle event not found
+                }
+            }
+        });
     }
 
 
